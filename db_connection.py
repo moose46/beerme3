@@ -1,4 +1,4 @@
-import psycopg2
+import psycopg
 
 
 class PostgreSQL:
@@ -8,7 +8,7 @@ class PostgreSQL:
 
     def get_cursor(self):
         # Connect to PostgreSQL
-        connection = psycopg2.connect(
+        connection = psycopg.connect(
             dbname="beerme3",
             user="bob",
             password="admin",
@@ -25,7 +25,7 @@ class PostgreSQL:
     def test(self):
         try:
             # Connect to PostgreSQL
-            connection = psycopg2.connect(
+            connection = psycopg.connect(
                 dbname="beerme3",
                 user="bob",
                 password="admin",

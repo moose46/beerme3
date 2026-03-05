@@ -4,8 +4,11 @@ certifi==2026.2.25
 charset-normalizer==3.4.4
 html-table-parser-python3==0.3.1
 idna==3.11
-psycopg2-binary==2.9.11
+psycopg==3.3.3
+psycopg-binary==3.3.3
 requests==2.32.5
 soupsieve==2.8.3
 typing_extensions==4.15.0
+tzdata==2025.3
 urllib3==2.6.3
+uv==0.10.8

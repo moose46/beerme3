@@ -1,4 +1,3 @@
-
 select
 	track,
 	driver,
