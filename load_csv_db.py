@@ -10,6 +10,7 @@ TARGET_RESULTS = (
     r"C:\Users\me\PycharmProjects\BeerMe3\data"
 )
 
+
 class CSV_DB:
     def __init__(self):
         self.connection = psycopg.connect(
@@ -54,7 +55,7 @@ class CSV_DB:
                                         )
                                         )
                     self.connection.commit()
-                except psycopg.OperationalError as e:
+                except Exception as e:
                     return None
 
         return results_file_name
@@ -84,9 +85,20 @@ class CSV_DB:
 
         return self.bets
 
+    def check_if_already_loaded(self,bet):
+        self.cursor.execute(f"select count(*) from nascar_results where race_date = '{bet}'")
+        cnt = self.cursor.fetchone()
+        return cnt[0] > 0
+
 
 if __name__ == "__main__":
     db = postgres_db.PostgreSQL()
     loader = CSV_DB()
+
     for bet in loader.bets:
-        print(loader.read_csv_race_results(bet))
+        if not loader.check_if_already_loaded(bet):
+            try:
+                print(loader.read_csv_race_results(bet))
+            except Exception as e:
+                print(e)
+                continue
