@@ -1,6 +1,6 @@
 
 select
-	race_date,
+	 to_char(race_date,'DD/MM/YYYY'),
 	track,
 	(
 	select
@@ -36,7 +36,27 @@ select
 	where
 		bob_pick = true
 		and g.race_date = a.race_date
-	) as bob_driver
+	) as bob_driver,
+	(
+	select
+		pos
+	from
+		nascar_results nr
+	where
+		nr.greg_pick = true
+		and pos = 1
+		and nr.race_date = a.race_date ) as greg_first_place,
+	(
+	select
+		pos
+	from
+		nascar_results nr
+	where
+		nr.bob_pick = true
+		and pos = 1
+		and nr.race_date = a.race_date) as bob_first_place
+	--	select the winner
+	--	end of select the winner
 from
 	public.nascar_results a
 group by

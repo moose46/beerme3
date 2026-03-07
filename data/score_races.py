@@ -1,9 +1,6 @@
-from collections import defaultdict
-from pathlib import Path
 import psycopg
 from psycopg.rows import dict_row
-import db_connection
-import db_connection as postgres_db
+
 
 class ScoreTheRaces:
     def __init__(self):
@@ -17,22 +14,21 @@ class ScoreTheRaces:
         )
         print("Connection successful!")
         self.cursor = self.connection.cursor()
+
     def get_results(self):
         return self.cursor.execute("""
-                            select
-	                            track,
-	                            driver,
-	                            pos,
-                                case
-                                    when greg_pick = true then 'GREG'
-                                    when bob_pick = true then 'BOB'
-                                end as pick
-                            from
-                                    nascar_results nr
-                            where
-                                    nr.greg_pick is not false
-                                or bob_pick is not false
-""").fetchall()
+                                   select track,
+                                          driver,
+                                          pos,
+                                          case
+                                              when greg_pick = true then 'GREG'
+                                              when bob_pick = true then 'BOB'
+                                              end as pick
+                                   from nascar_results nr
+                                   where nr.greg_pick is not false
+                                      or bob_pick is not false
+                                   """).fetchall()
+
     def get_results2(self):
         return self.cursor.execute("""
                                    select race_date,
@@ -53,63 +49,41 @@ class ScoreTheRaces:
                                    group by race_date,
                                             track""").fetchall()
 
-
     def get_results3(self):
         return self.cursor.execute("""
-select
-	race_date,
-	track,
-	(
-	select
-		(pos)
-	from
-		nascar_results g
-	where
-		greg_pick = true
-		and g.race_date = a.race_date
-	) as greg_pos,
-	(
-	select
-		(driver)
-	from
-		nascar_results g
-	where
-		greg_pick = true
-		and g.race_date = a.race_date
-	) as greg_driver,
-	(
-	select
-		(pos)
-	from
-		nascar_results b
-	where
-		bob_pick = true
-		and b.race_date = a.race_date) as bob_pos,
-	(
-	select
-		(driver)
-	from
-		nascar_results g
-	where
-		bob_pick = true
-		and g.race_date = a.race_date
-	) as bob_driver
-from
-	public.nascar_results a
-group by
-	race_date,
-	track
-                               """).fetchall()
+                                   select to_char(race_date, 'MM/DD/YYYY')  as race_date,
+                                          track,
+                                          (select (pos)
+                                           from nascar_results g
+                                           where greg_pick = true
+                                             and g.race_date = a.race_date) as greg_pos,
+                                          (select (driver)
+                                           from nascar_results g
+                                           where greg_pick = true
+                                             and g.race_date = a.race_date) as greg_driver,
+                                          (select (pos)
+                                           from nascar_results b
+                                           where bob_pick = true
+                                             and b.race_date = a.race_date) as bob_pos,
+                                          (select (driver)
+                                           from nascar_results g
+                                           where bob_pick = true
+                                             and g.race_date = a.race_date) as bob_driver
+                                   from public.nascar_results a
+                                   group by race_date,
+                                            track
+                                   order by race_date desc;
+                                   """).fetchall()
 
 
 if __name__ == "__main__":
     scoreTheRaces = ScoreTheRaces()
-    results = scoreTheRaces.get_results()
-    results2 = scoreTheRaces.get_results2()
+    # results = scoreTheRaces.get_results()
+    # results2 = scoreTheRaces.get_results2()
     results3 = scoreTheRaces.get_results3()
-    for row in results:
-        print(row)
-    for row in results2:
-        print(row)
+    # for row in results:
+    #     print(row)
+    # for row in results2:
+    #     print(row)
     for row in results3:
         print(row)
