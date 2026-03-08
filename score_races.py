@@ -85,8 +85,8 @@ if __name__ == "__main__":
     #     print(row)
     # for row in results2:
     #     print(row)
-    bob_total_beers = 0
-    greg_total_beers = 0
+    total_bob_beers = 0
+    total_greg_beers = 0
     for row in results3:
         if row["greg_pos"] > row["bob_pos"]:
             row["greg_beer"] = 0
@@ -100,8 +100,8 @@ if __name__ == "__main__":
                 row["greg_beer"] = 2
             else:
                 row["greg_beer"] = 1
-        bob_total_beers += row["bob_beer"]
-        greg_total_beers += row["greg_beer"]
+        total_bob_beers += row["bob_beer"]
+        total_greg_beers += row["greg_beer"]
         print(row)
-    print(bob_total_beers)
-    print(greg_total_beers)
+    print(total_bob_beers)
+    print(total_greg_beers)
