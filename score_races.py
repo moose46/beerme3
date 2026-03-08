@@ -9,8 +9,8 @@ class ScoreTheRaces:
             user="bob",
             password="admin",
             host="localhost",  # or your database server's IP
-            port="5432"  # default PostgreSQL port
-            , row_factory=dict_row
+            port="5432",  # default PostgreSQL port
+            row_factory=dict_row,
         )
         print("Connection successful!")
         self.cursor = self.connection.cursor()
@@ -85,5 +85,23 @@ if __name__ == "__main__":
     #     print(row)
     # for row in results2:
     #     print(row)
+    bob_total_beers = 0
+    greg_total_beers = 0
     for row in results3:
+        if row["greg_pos"] > row["bob_pos"]:
+            row["greg_beer"] = 0
+            if row["bob_pos"] == 1:
+                row["bob_beer"] = 2
+            else:
+                row["bob_beer"] = 1
+        if row["greg_pos"] < row["bob_pos"]:
+            row["bob_beer"] = 0
+            if row["greg_pos"] == 1:
+                row["greg_beer"] = 2
+            else:
+                row["greg_beer"] = 1
+        bob_total_beers += row["bob_beer"]
+        greg_total_beers += row["greg_beer"]
         print(row)
+    print(bob_total_beers)
+    print(greg_total_beers)
