@@ -1,6 +1,7 @@
 
 select
-	 to_char(race_date,'DD/MM/YYYY'),
+	 to_char(race_date,'MM/DD/YYYY'),
+--	 to_char(race_date,'DD/MM/YYYY'),
 	track,
 	(
 	select
@@ -62,3 +63,4 @@ from
 group by
 	race_date,
 	track
+order by race_date

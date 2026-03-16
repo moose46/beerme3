@@ -88,6 +88,12 @@ class CSV_DB:
             "Track": "Phoenix",
             "badge_color": "bg-warning text-dark",
         }
+        self.bets["03-15-2026"] = {
+            "Greg": "Kyle Larson",
+            "Bob": "Christopher Bell",
+            "Track": "Las Vegas",
+            "badge_color": "bg-warning text-dark",
+        }
 
         return self.bets
 
