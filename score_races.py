@@ -64,5 +64,5 @@ if __name__ == "__main__":
         total_bob_beers += row["bob_beer"]
         total_greg_beers += row["greg_beer"]
         print(row)
-    print(total_bob_beers)
-    print(total_greg_beers)
+    print(f"Bob won {total_bob_beers} beers")
+    print(f"Greg won {total_greg_beers} beers")
