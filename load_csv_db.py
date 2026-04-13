@@ -11,7 +11,7 @@ TARGET_RESULTS = (
 )
 
 
-class CSV_DB:
+class CsvDB:
     def __init__(self):
         self.connection = psycopg.connect(
             dbname="beerme3",
@@ -22,7 +22,7 @@ class CSV_DB:
         )
         print("Connection successful!")
         self.cursor = self.connection.cursor()
-        self.bets = defaultdict(dict)
+        self.bets : dict = defaultdict(dict)
         self.bets = self.get_bets()
 
     def read_csv_race_results(self, abet):
@@ -55,7 +55,8 @@ class CSV_DB:
                                         )
                                         )
                     self.connection.commit()
-                except Exception as e:
+                except Exception as e1:
+                    print(f"{e1}")
                     return None
 
         return results_file_name
@@ -115,15 +116,15 @@ class CSV_DB:
 
         return self.bets
 
-    def check_if_already_loaded(self,bet):
-        self.cursor.execute(f"select count(*) from nascar_results where race_date = '{bet}'")
+    def check_if_already_loaded(self,thebet):
+        self.cursor.execute(f"select count(*) from nascar_results where race_date = '{thebet}'")
         cnt = self.cursor.fetchone()
         return cnt[0] > 0
 
 
 if __name__ == "__main__":
     db = postgres_db.PostgreSQL()
-    loader = CSV_DB()
+    loader = CsvDB()
 
     for bet in loader.bets:
         if not loader.check_if_already_loaded(bet):
