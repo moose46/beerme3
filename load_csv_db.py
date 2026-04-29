@@ -31,10 +31,11 @@ class CsvDB:
         self.cursor = self.connection.cursor()
         self.bets: dict = defaultdict(dict)
         self.bets = self.get_bets()
-
+        self.track_id = 0  # current track_id
     def read_csv_race_results(self, abet):
         # abet is one bet from a list of bets
         results_file_name: str = f"{TARGET_RESULTS}\\{abet}.csv"
+        track_id = self.get_track_id(track_name=self.bets[abet]["Track"])
         with open(Path(f"{TARGET_RESULTS}\\{abet}.csv"), "r") as file:
             reader = csv.DictReader(file, delimiter="\t")
             for row in reader:
@@ -57,7 +58,7 @@ class CsvDB:
                                         (race_date, driver, pos,
                                          greg_pick, bob_pick, track,
                                          track_id)
-                                        values (%s, %s, %s, %s, %s, %s)
+                                        values (%s, %s, %s, %s, %s, %s, %s)
                                         """,
                                         (
                                             abet,
@@ -66,18 +67,20 @@ class CsvDB:
                                             greg_pick,
                                             bob_pick,
                                             self.bets[abet]["Track"],
-                                            next
+                                            track_id
                                         )
                                         )
                     self.connection.commit()
                 except Exception as e1:
-                    print(f"{e1}")
-                    return None
+                    exit(e1.__str__())
+
 
         return results_file_name
 
-    def insert_results(self, abet):
-        pass
+    def get_track_id(self, track_name):
+        sql = "select id from track where track_name = %s"
+        self.cursor.execute(sql, (track_name,))
+        return self.cursor.fetchone()[0]
 
     def get_bets(self):
         self.bets['02-15-2026'] = {
@@ -151,27 +154,39 @@ class CsvDB:
         else return the track id
         :param track:
         """
-        self.cursor.execute(
-            f"select count(*) from track where track_name = '{track}'")
-        cnt = self.cursor.fetchone()
-        if cnt[0] == 0:
-            print(f"{track} does not exist, creating")
-            self.cursor.execute(
-                f"insert into track (track_name, id) values('{track}', "
-                f"nextval('seq_nascar_results'))")
+        try:
+            sql = """
+                  insert into track (track_name, id)
+                  select %s, nextval('seq_track_id')
+                  where not exists  (select track_name
+                                     from track
+                                     where track_name = %s)
+                  """
+            self.cursor.execute(sql, (track, track))
             self.connection.commit()
-        print(f"{track} = {cnt[0]}")
+        except Exception as e:
+            self.connection.rollback()
+            exit(e.__str__())
+
         return True
 
     def check_if_already_loaded(self, thebet):
         # checks the nascar_results table for thebet.track and thebet race_date
         # returns true if found, false if not found
-        self.cursor.execute(
-            f"select count(*) from nascar_results where race_date = '"
-            f"{thebet}'")
-        cnt = self.cursor.fetchone()
+        cnt = 0
+        try:
+            sql = """
+                  select count(*)
+                  from nascar_results
+                  where race_date = %s
+                  """
+            self.cursor.execute(sql, (thebet,))
+            cnt = self.cursor.fetchone()
+        except Exception as e:
+            self.connection.rollback()
+            exit(e.__str__())
         # print(cnt[1])
-        return False if cnt is None else True
+        return False if cnt[0] == 0 else True
 
 
 if __name__ == "__main__":
@@ -184,5 +199,4 @@ if __name__ == "__main__":
             try:
                 print(loader.read_csv_race_results(bet))
             except Exception as e:
-                print(e)
-                continue
+                exit(e.__str__())

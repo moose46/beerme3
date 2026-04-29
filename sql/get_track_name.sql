@@ -1,0 +1,1 @@
+select count(*) from track where track_name = 'Talladega'
