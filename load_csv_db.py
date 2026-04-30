@@ -8,7 +8,10 @@ run scrape_espn.py before running this file
 import csv
 from collections import defaultdict
 from pathlib import Path
+from typing import Any
 
+import betData2026
+from betData2026 import BetData
 import psycopg
 
 import db_connection as postgres_db
@@ -19,7 +22,7 @@ TARGET_RESULTS = (
 
 
 class CsvDB:
-    def __init__(self):
+    def __init__(self, bets_2026):
         self.connection = psycopg.connect(
             dbname="beerme3",
             user="bob",
@@ -30,8 +33,13 @@ class CsvDB:
         print("Connection successful!")
         self.cursor = self.connection.cursor()
         self.bets: dict = defaultdict(dict)
-        self.bets = self.get_bets()
+        # self.Bets = BetData()
+        self.bets = bets_2026
         self.track_id = 0  # current track_id
+        self.tracks_found = 0
+        self.results_loaded = 0
+        self.races_scored = 0
+
     def read_csv_race_results(self, abet):
         # abet is one bet from a list of bets
         results_file_name: str = f"{TARGET_RESULTS}\\{abet}.csv"
@@ -71,80 +79,21 @@ class CsvDB:
                                         )
                                         )
                     self.connection.commit()
+                    self.results_loaded += 1
                 except Exception as e1:
                     exit(e1.__str__())
-
 
         return results_file_name
 
     def get_track_id(self, track_name):
         sql = "select id from track where track_name = %s"
         self.cursor.execute(sql, (track_name,))
-        return self.cursor.fetchone()[0]
-
+        try:
+            return self.cursor.fetchone()[0]
+        except Exception as eGetTrackId:
+            exit(eGetTrackId.__str__())
+    @property
     def get_bets(self):
-        self.bets['02-15-2026'] = {
-            "Greg"       : "William Byron",
-            "Bob"        : "Ryan Blaney",
-            "Track"      : "Daytona",
-            "badge_color": "bg-warning text-dark",
-        }
-        self.bets["02-22-2026"] = {
-            "Greg"       : "Ryan Blaney",
-            "Bob"        : "Chase Elliott",
-            "Track"      : "Atlanta",
-            "badge_color": "bg-warning text-dark",
-        }
-        self.bets["03-01-2026"] = {
-            "Greg"       : "Shane van Gisbergen",
-            "Bob"        : "Tyler Reddick",
-            "Track"      : "COTA",
-            "badge_color": "bg-warning text-dark",
-        }
-        self.bets["03-08-2026"] = {
-            "Greg"       : "Ryan Blaney",
-            "Bob"        : "Kyle Larson",
-            "Track"      : "Phoenix",
-            "badge_color": "bg-warning text-dark",
-        }
-        self.bets["03-15-2026"] = {
-            "Greg"       : "Kyle Larson",
-            "Bob"        : "Christopher Bell",
-            "Track"      : "Las Vegas",
-            "badge_color": "bg-warning text-dark",
-        }
-        self.bets["03-22-2026"] = {
-            "Greg"       : "Denny Hamlin",
-            "Bob"        : "Tyler Reddick",
-            "Track"      : "Darlington",
-            "badge_color": "bg-warning text-dark",
-        }
-        self.bets["03-29-2026"] = {
-            "Greg"       : "William Byron",
-            "Bob"        : "Denny Hamlin",
-            "Track"      : "Martinsville",
-            "badge_color": "bg-warning text-dark",
-        }
-        self.bets["04-12-2026"] = {
-            "Greg"       : "Kyle Larson",
-            "Bob"        : "Ty Gibbs",
-            "Track"      : "Bristol",
-            "badge_color": "bg-warning text-dark",
-        }
-        self.bets["04-19-2026"] = {
-            "Greg"       : "Kyle Larson",
-            "Bob"        : "Tyler Reddick",
-            "Track"      : "Kansas",
-            "badge_color": "bg-warning text-dark",
-        }
-
-        self.bets["04-26-2026"] = {
-            "Greg"       : "Ryan Blaney",
-            "Bob"        : "Tyler Reddick",
-            "Track"      : "Talladega",
-            "badge_color": "bg-warning text-dark",
-        }
-
         return self.bets
 
     def hydrate_track_table(self, track):
@@ -164,13 +113,13 @@ class CsvDB:
                   """
             self.cursor.execute(sql, (track, track))
             self.connection.commit()
+            self.tracks_found += 1
+            return track
         except Exception as e:
             self.connection.rollback()
             exit(e.__str__())
 
-        return True
-
-    def check_if_already_loaded(self, thebet):
+    def check_if_race_is_already_loaded(self, thebet) -> bool | Any:
         # checks the nascar_results table for thebet.track and thebet race_date
         # returns true if found, false if not found
         cnt = 0
@@ -182,21 +131,28 @@ class CsvDB:
                   """
             self.cursor.execute(sql, (thebet,))
             cnt = self.cursor.fetchone()
-        except Exception as e:
+            self.races_scored += 1
+            # return cnt
+        except Exception as echeck_if_race_is_already_loaded:
             self.connection.rollback()
-            exit(e.__str__())
-        # print(cnt[1])
+            exit(echeck_if_race_is_already_loaded.__str__())
+
         return False if cnt[0] == 0 else True
 
 
 if __name__ == "__main__":
     db = postgres_db.PostgreSQL()
-    loader = CsvDB()
-
-    for bet in loader.bets:
+    # load data from betData2026.py
+    bets = BetData()
+    # hydrate the CsvDB class with the bet data from betData2026
+    loader = CsvDB(bets_2026=bets.get_bets)
+    for bet in loader.get_bets:
         hydrated = loader.hydrate_track_table(loader.bets[bet]["Track"])
-        if not loader.check_if_already_loaded(bet):
+        if not loader.check_if_race_is_already_loaded(bet):
             try:
                 print(loader.read_csv_race_results(bet))
             except Exception as e:
                 exit(e.__str__())
+    print(f"{loader.tracks_found} tracks found")
+    print(f"{loader.races_scored} races scored")
+    print(f"{loader.results_loaded} results loaded")
