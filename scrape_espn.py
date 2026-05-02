@@ -2,38 +2,20 @@
 # -collections-has-no-attribute-callable-using-beautifu
 import collections
 import shutil
-import time
 from pathlib import Path
 
 collections.Callable = collections.abc.Callable
-
+from settings import TARGET_RESULTS,TARGET_RESULTS_BEER_ME,HOST,HEADERS
 import requests
 from bs4 import BeautifulSoup
 
 #  python scrape_espn.py
 
 
-TARGET_RESULTS = (
-    r"C:\Users\me\PycharmProjects\BeerMe3\data"
-)
-TARGET_RESULTS_BEER_ME = (
-    r"C:\Users\me\Documents\VisualCodeSource\beerme2\data"
-)
-HOST = ("https://www.espn.com/racing/raceresults/_/series/sprint/raceId"
-        "/202404280004")
-HOST = "https://www.espn.com/racing/results/_/year/"
-# HOST = "https://www.moneycontrol.com/india/stockpricequote/refineries
-# /relianceindustries/RI"
-PORT = 80
-headers = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                  "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 "
-                  "Safari/537.36 Edg/147.0.0.0"
-}
 
 
 def bs(url):
-    response = requests.get(url, headers=headers)
+    response = requests.get(url, headers=HEADERS)
     if response.status_code in [200]:
         soup_is_ready = BeautifulSoup(response.text,
                                       "html.parser")
@@ -46,7 +28,12 @@ def bs(url):
         return None
 
 
-def process_results(psoup):
+def process_year_to_date_results(psoup):
+    """
+     Create mm-dd-yyyy.csv race results file
+     returns a list of mm-dd-yyyy.csv filenames
+
+    """
     race_dates = []
     # https://www.geeksforgeeks.org/python/extract-all-the-urls-from-the
     # -webpage-using-python/
@@ -81,7 +68,7 @@ def process_results(psoup):
         hot_soup = bs(the_url)
         cnt = 0
         if hot_soup:
-            f = open(output_file_name, "w")
+            csv_file = open(output_file_name, "w")
             if table_rows := hot_soup.find_all("tr"):
                 for tr in table_rows:
                     for data_cell in tr.find_all("td"):
@@ -91,9 +78,9 @@ def process_results(psoup):
                             # print(child)
                         cnt += 1
                         # print(data_cell.get_text(strip=True), end="\t")
-                        f.write(data_cell.get_text(strip=True) + "\t")
+                        csv_file.write(data_cell.get_text(strip=True) + "\t")
                     if cnt > 1:
-                        f.write("\n")
+                        csv_file.write("\n")
     else:
         print(f"End of {year} results.")
     return race_dates
@@ -119,7 +106,7 @@ if __name__ == "__main__":
         url = f"{HOST}{year}"
         try:
             if soup := bs(url):
-                race_dates = process_results(soup)
+                race_dates = process_year_to_date_results(soup)
             else:
                 print(f"No data found for year {year}")
         except Exception as e:

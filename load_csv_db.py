@@ -6,19 +6,17 @@ run scrape_espn.py before running this file
 
 """
 import csv
+import shutil
 from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
-import betData2026
-from betData2026 import BetData
 import psycopg
 
 import db_connection as postgres_db
-
-TARGET_RESULTS = (
-    r"C:\Users\me\PycharmProjects\BeerMe3\data"
-)
+from betData2026 import BetData
+from settings import TARGET_RESULTS, TARGET_BEERME_BET_DATA2026, \
+    SOURCE_BEERME_BET_DATA2026
 
 
 class CsvDB:
@@ -92,6 +90,7 @@ class CsvDB:
             return self.cursor.fetchone()[0]
         except Exception as eGetTrackId:
             exit(eGetTrackId.__str__())
+
     @property
     def get_bets(self):
         return self.bets
@@ -140,6 +139,16 @@ class CsvDB:
         return False if cnt[0] == 0 else True
 
 
+def copy_race_bets():
+    my_file = Path(f"{SOURCE_BEERME_BET_DATA2026}")
+    if my_file.is_file():
+        print(
+            f"-- Copying {Path(my_file)} to \n "
+            f"{TARGET_BEERME_BET_DATA2026}")
+        shutil.copy2(f"{SOURCE_BEERME_BET_DATA2026}",
+                     f"{TARGET_BEERME_BET_DATA2026}")  # copy2 preserves
+
+
 if __name__ == "__main__":
     db = postgres_db.PostgreSQL()
     # load data from betData2026.py
@@ -156,3 +165,4 @@ if __name__ == "__main__":
     print(f"{loader.tracks_found} tracks found")
     print(f"{loader.races_scored} races scored")
     print(f"{loader.results_loaded} results loaded")
+    copy_race_bets()
