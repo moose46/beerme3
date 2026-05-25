@@ -161,7 +161,8 @@ if __name__ == "__main__":
             try:
                 print(loader.read_csv_race_results(bet))
             except Exception as e:
-                exit(e.__str__())
+                print(e.__str__())
+                continue
     print(f"{loader.tracks_found} tracks found")
     print(f"{loader.races_scored} races scored")
     print(f"{loader.results_loaded} results loaded")

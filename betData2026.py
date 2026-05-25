@@ -68,6 +68,24 @@ class BetData:
             "Track"      : "Talladega",
             "badge_color": "bg-warning text-dark",
         }
+        self.individual_bets["05-03-2026"] = {
+            "Greg"       : "Denny Hamlin",
+            "Bob"        : "Carson Hocevar",
+            "Track"      : "Texas",
+            "badge_color": "bg-warning text-dark",
+        }
+        self.individual_bets["05-10-2026"] = {
+            "Greg"       : "Shane van Gisbergen",
+            "Bob"        : "Ty Gibbs",
+            "Track"      : "Watkins Gleen",
+            "badge_color": "bg-warning text-dark",
+        }
+        self.individual_bets["05-24-2026"] = {
+            "Greg"       : "Denny Hamlin",
+            "Bob"        : "Ross Chastain",
+            "Track"      : "Charlotte",
+            "badge_color": "bg-warning text-dark",
+        }
 
         # # start of can't pick a driver twice
 
