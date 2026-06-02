@@ -1,0 +1,1 @@
+select name,length,dt."configuration" ,city,state,dt.short_name  from db_track dt 
