@@ -48,7 +48,9 @@ if __name__ == "__main__":
     results = scoreTheRaces.get_results()
     total_bob_beers = 0
     total_greg_beers = 0
+    print(results)
     for row in results:
+        print(row)
         if row["greg_pos"] > row["bob_pos"]:
             row["greg_beer"] = 0
             if row["bob_pos"] == 1:
