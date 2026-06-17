@@ -49,22 +49,24 @@ if __name__ == "__main__":
     total_bob_beers = 0
     total_greg_beers = 0
     print(results)
-    for row in results:
-        print(row)
-        if row["greg_pos"] > row["bob_pos"]:
-            row["greg_beer"] = 0
-            if row["bob_pos"] == 1:
-                row["bob_beer"] = 2
-            else:
-                row["bob_beer"] = 1
-        if row["greg_pos"] < row["bob_pos"]:
-            row["bob_beer"] = 0
-            if row["greg_pos"] == 1:
-                row["greg_beer"] = 2
-            else:
-                row["greg_beer"] = 1
-        total_bob_beers += row["bob_beer"]
-        total_greg_beers += row["greg_beer"]
-        print(row)
+    try:
+        for row in results:
+            if row["greg_pos"] > row["bob_pos"]:
+                row["greg_beer"] = 0
+                if row["bob_pos"] == 1:
+                    row["bob_beer"] = 2
+                else:
+                    row["bob_beer"] = 1
+            if row["greg_pos"] < row["bob_pos"]:
+                row["bob_beer"] = 0
+                if row["greg_pos"] == 1:
+                    row["greg_beer"] = 2
+                else:
+                    row["greg_beer"] = 1
+            total_bob_beers += row["bob_beer"]
+            total_greg_beers += row["greg_beer"]
+    except Exception as e:
+        print(e)
+        exit(e.__str__())
     print(f"Bob won {total_bob_beers} beers")
     print(f"Greg won {total_greg_beers} beers")
