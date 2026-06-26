@@ -104,6 +104,12 @@ class BetData:
             "Track"      : "Pocono",
             "badge_color": "bg-warning text-dark",
         }
+        self.individual_bets["06-21-2026"] = {
+            "Greg"       : "Connor Zilisch",
+            "Bob"        : "Shane van Gisbergen",
+            "Track"      : "Coronado",
+            "badge_color": "bg-warning text-dark",
+        }
 
         # # start of can't pick a driver twice
 
