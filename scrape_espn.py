@@ -2,16 +2,16 @@
 # -collections-has-no-attribute-callable-using-beautifu
 import collections
 import shutil
+import sys
 from pathlib import Path
 
 collections.Callable = collections.abc.Callable
-from settings import TARGET_RESULTS,TARGET_RESULTS_BEER_ME,HOST,HEADERS
+from settings import TARGET_RESULTS, TARGET_RESULTS_BEER_ME, HOST, HEADERS
 import requests
 from bs4 import BeautifulSoup
 
+
 #  python scrape_espn.py
-
-
 
 
 def bs(url):
@@ -27,7 +27,12 @@ def bs(url):
         print(f"Failed to retrieve data from {url}")
         return None
 
+def get_track_name(psoup):
+    rows = psoup.find_all("tr")
 
+    for row in rows:
+        table_row = row.find_all("tr",attrs={"class": "evenrow"})
+    return
 def process_year_to_date_results(psoup):
     """
      Create mm-dd-yyyy.csv race results file
@@ -45,6 +50,8 @@ def process_year_to_date_results(psoup):
             for link in psoup.find_all("a")
             if link.get("href").__contains__("/racing/raceresults/_")
         )
+        # get all table rows
+        race_track = psoup.find_all("tr")
     for the_url in urls:
         # Filter out URLs that do not match the expected pattern
         # print(f"Processing URL: {the_url.split('/')[-1]}")
@@ -101,9 +108,21 @@ def copy_race_dates(prace_dates: list):
 
 if __name__ == "__main__":
     race_dates = []
-    for year in range(2026, 2027):
+    try:
+        year = int(sys.argv[1])
+    except Exception as e:
+        year = 2026
+        # exit(f"Enter a vaild race year: Example: python scrape_espn.py 2025
+        # \n{e.__str__()}")
+
+    for year in range(year, year + 1):
         print(f"Processing year: {year}")
         url = f"{HOST}{year}"
+        try:
+            if soup := bs(url):
+                track_name = get_track_name(soup)
+        except Exception as e:
+            exit(e.__str__())
         try:
             if soup := bs(url):
                 race_dates = process_year_to_date_results(soup)
@@ -111,4 +130,5 @@ if __name__ == "__main__":
                 print(f"No data found for year {year}")
         except Exception as e:
             exit(e.__str__())
+    # copy race dates to visual studio beerme2
     copy_race_dates(race_dates)

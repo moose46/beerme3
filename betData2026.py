@@ -1,7 +1,7 @@
 from collections import defaultdict
 
 
-class BetData:
+class BetData2026:
     def __getitem__(self, race_date):
         return self.individual_bets[race_date]
 
