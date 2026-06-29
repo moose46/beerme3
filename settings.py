@@ -12,6 +12,7 @@ HEADERS = {
 }
 
 HOST = "https://www.espn.com/racing/results/_/year/"
+TRACK_HOST = "https://frcs.pro/nascar/cup/races/schedule/"
 PORT = 80
 TARGET_BEERME_BET_DATA2026 = r"C:\Users\me\Documents\VisualCodeSource\beerme2\betData2026.py"
 SOURCE_BEERME_BET_DATA2026 = r"C:\Users\me\PycharmProjects\BeerMe3\betData2026.py"
