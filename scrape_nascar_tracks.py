@@ -2,12 +2,11 @@
 # -collections-has-no-attribute-callable-using-beautifu
 import collections
 import json
-import shutil
 import sys
 from pathlib import Path
 
 collections.Callable = collections.abc.Callable
-from settings import TARGET_RESULTS, TARGET_RESULTS_BEER_ME, HEADERS, TRACK_HOST
+from settings import TARGET_RESULTS, HEADERS, TRACK_HOST
 import requests
 from bs4 import BeautifulSoup
 
@@ -37,16 +36,15 @@ def get_track_name(psoup):
         race_television = row.find_all("td", {"data-column": "television"})
         race_winner = row.find_all("td", {"data-column": "winner"})
         win_make = row.find_all("td", {"data-column": "win_make"})
+        race_name = row.find_all("td", {"data-column": "race"})
+
         for index in range(len(race_dates)):
-            tracks.append({
-                "track": track_data[index].get_text(strip=True),
-                "date": race_dates[index].get(
+            a_track_dict = dict(track=track_data[index].get_text(strip=True), date=race_dates[index].get(
                 "data-sort")[5:7] + "-" + race_dates[index].get("data-sort")[8:10] + "-" + race_dates[index].get(
-                "data-sort")[0:4],
-                "time": race_dates[index].get("data-sort")[11:19],
-                "television"  : race_television[index].get_text(),
-                "win_make"  : win_make[index].get_text(),
-                "race_winner"  : race_winner[index].get_text()})
+                "data-sort")[0:4], time=race_dates[index].get("data-sort")[11:19],
+                                television=race_television[index].get_text(), win_make=win_make[index].get_text(),
+                                race_winner=race_winner[index].get_text(), race_name=race_name[index].get_text())
+            tracks.append(a_track_dict)
             # tracks.append(race_dates[index].get_text(strip=True))  # x = data_cell  #
             # tracks.append( {"track": data_cell.get_text()})  # for race_date in race_dates:  #     tracks.add(
             # race_date.get_text())
@@ -109,23 +107,12 @@ def process_year_to_date_results(psoup):
     return race_dates
 
 
-def copy_race_dates(prace_dates: list):
-    return
-    for race in prace_dates:
-        # print(f"{TARGET_RESULTS_BEER_ME}\\{race}")
-        my_file = Path(f"{TARGET_RESULTS_BEER_ME}\\{race}")
-        if not my_file.is_file():
-            print(f"-- Copying {Path(my_file)} to \n "
-                  f"{TARGET_RESULTS_BEER_ME}\\{race}")
-            shutil.copy2(f"{TARGET_RESULTS}\\{race}", f"{TARGET_RESULTS_BEER_ME}")  # copy2 preserves  # metadata
-
-
 if __name__ == "__main__":
     race_dates = []
     try:
         year = int(sys.argv[1])
     except Exception as e:
-        year = 2024  # exit(f"Enter a vaild race year: Example: python scrape_espn.py 2025  # \n{e.__str__()}")
+        year = 2023  # exit(f"Enter a valid race year: Example: python scrape_espn.py 2025  # \n{e.__str__()}")
 
     for year in range(year, year + 1):
         print(f"Processing year: {year}")

@@ -110,6 +110,12 @@ class BetData2026:
             "Track"      : "Coronado",
             "badge_color": "bg-warning text-dark",
         }
+        self.individual_bets["06-28-2026"] = {
+            "Greg"       : "Shane van Gisbergen",
+            "Bob"        : "Kyle Larson",
+            "Track"      : "Sonoma Raceway",
+            "badge_color": "bg-warning text-dark",
+        }
 
         # # start of can't pick a driver twice
 

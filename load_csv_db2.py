@@ -10,7 +10,7 @@ import shutil
 from collections import defaultdict
 from pathlib import Path
 from typing import Any
-
+import json
 import psycopg
 
 import db_connection as postgres_db
@@ -20,7 +20,7 @@ from settings import TARGET_RESULTS, TARGET_BEERME_BET_DATA2026, \
 
 
 class CsvDB:
-    def __init__(self, bets_2026):
+    def __init__(self):
         self.connection = psycopg.connect(
             dbname="beerme3",
             user="bob",
@@ -30,9 +30,6 @@ class CsvDB:
         )
         print("Connection successful!")
         self.cursor = self.connection.cursor()
-        self.bets: dict = defaultdict(dict)
-        # self.Bets = BetData()
-        self.bets = bets_2026
         self.track_id = 0  # current track_id
         self.tracks_found = 0
         self.results_loaded = 0
@@ -138,32 +135,27 @@ class CsvDB:
 
         return False if cnt[0] == 0 else True
 
-
-def copy_race_bets():
-    my_file = Path(f"{SOURCE_BEERME_BET_DATA2026}")
-    if my_file.is_file():
-        print(
-            f"-- Copying {Path(my_file)} to \n "
-            f"{TARGET_BEERME_BET_DATA2026}")
-        shutil.copy2(f"{SOURCE_BEERME_BET_DATA2026}",
-                     f"{TARGET_BEERME_BET_DATA2026}")  # copy2 preserves
+    def hydrate_race_results_from_json(self, row,track_id):
+        try:
+            print(f"track_id={track_id}")
+        except Exception as e:
+            exit(f"hydrate_race_results_from_json{e.__str__()}")
 
 
 if __name__ == "__main__":
     db = postgres_db.PostgreSQL()
-    # load data from betData2026.py
-    bets = BetData2026()
+    # load track data from yyyy-races.json
+    db = CsvDB()
+    with open('data\\2026_races.json', "r") as file:
+        races = json.load(file)
+        for row in races:
+            db.hydrate_track_table(row["track"])
+        for row in races:
+            already_in_db = db.check_if_race_is_already_loaded(row["date"])
+            track_id = db.get_track_id(track_name=row["track"])
+
+            db.hydrate_race_results_from_json(row, track_id=track_id)
     # hydrate the CsvDB class with the bet data from betData2026
-    loader = CsvDB(bets_2026=bets.get_bets)
-    for bet in loader.get_bets:
-        hydrated = loader.hydrate_track_table(loader.bets[bet]["Track"])
-        if not loader.check_if_race_is_already_loaded(bet):
-            try:
-                print(loader.read_csv_race_results(bet))
-            except Exception as e:
-                print(e.__str__())
-                continue
-    print(f"{loader.tracks_found} tracks found")
-    print(f"{loader.races_scored} races scored")
-    print(f"{loader.results_loaded} results loaded")
-    copy_race_bets()
+    # loader = CsvDB(bets_2026=bets.get_bets)
+    # for bet in loader.get_bets:
+    #     hydrated = loader.hydrate_track_table(loader.bets[bet]["Track"])
