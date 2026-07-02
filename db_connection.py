@@ -4,11 +4,12 @@ import psycopg
 class PostgreSQL:
     def __init__(self):
         self.cursor = None
+        self.connection = None
         pass
 
     def get_cursor(self):
         # Connect to PostgreSQL
-        connection = psycopg.connect(
+        self.connection = psycopg.connect(
             dbname="beerme3",
             user="bob",
             password="admin",
@@ -16,16 +17,16 @@ class PostgreSQL:
             port="5432"  # default PostgreSQL port
         )
 
-        self.cursor = connection.cursor()
-        print("Connection successful!")
+        self.cursor = self.connection.cursor()
+        # print(f"db={connection}")
         # Create a cursor object to execute SQL queries
-        return connection.cursor()
+        return self.connection.cursor()
 
 
     def test(self):
         try:
             # Connect to PostgreSQL
-            connection = psycopg.connect(
+            self.connection = psycopg.connect(
                 dbname="beerme3",
                 user="bob",
                 password="admin",
@@ -34,7 +35,7 @@ class PostgreSQL:
             )
             print("Connection successful!")
             # Create a cursor object to execute SQL queries
-            self.cursor = connection.cursor()
+            self.cursor = self.connection.cursor()
             # Example query: Fetch PostgreSQL version
             self.cursor.execute("SELECT version();")
             db_version = self.cursor.fetchone()
@@ -43,9 +44,9 @@ class PostgreSQL:
             print(f"Error connecting to PostgreSQL: {error}")
         finally:
             # Close the connection
-            if connection:
+            if self.connection:
                 self.cursor.close()
-                connection.close()
+                self.connection.close()
                 print("Connection closed.")
 
 

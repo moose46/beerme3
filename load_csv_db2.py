@@ -115,8 +115,8 @@ class CsvDB:
             self.connection.rollback()
             exit(e.__str__())
 
-    def check_if_race_is_already_loaded(self, thebet) -> bool | Any:
-        # checks the nascar_results table for thebet.track and thebet race_date
+    def check_if_race_is_already_loaded(self, race_date) -> bool | Any:
+        # checks the nascar_results table for the track and race_date
         # returns true if found, false if not found
         cnt = 0
         try:
@@ -125,7 +125,7 @@ class CsvDB:
                   from nascar_results
                   where race_date = %s
                   """
-            self.cursor.execute(sql, (thebet,))
+            self.cursor.execute(sql, (race_date,))
             cnt = self.cursor.fetchone()
             self.races_scored += 1
             # return cnt
@@ -137,7 +137,8 @@ class CsvDB:
 
     def hydrate_race_results_from_json(self, row,track_id):
         try:
-            print(f"track_id={track_id}")
+            track_id = db.get_track_id(track_name=row["track"])
+            print(f"row={row} track_id={track_id}")
         except Exception as e:
             exit(f"hydrate_race_results_from_json{e.__str__()}")
 
@@ -150,9 +151,11 @@ if __name__ == "__main__":
         races = json.load(file)
         for row in races:
             db.hydrate_track_table(row["track"])
+        # for each race, load results
         for row in races:
-            already_in_db = db.check_if_race_is_already_loaded(row["date"])
-            track_id = db.get_track_id(track_name=row["track"])
+            # if already in db skip
+            if db.check_if_race_is_already_loaded(row["date"]):
+                continue
 
             db.hydrate_race_results_from_json(row, track_id=track_id)
     # hydrate the CsvDB class with the bet data from betData2026

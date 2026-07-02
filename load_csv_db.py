@@ -84,7 +84,7 @@ class CsvDB:
         return results_file_name
 
     def get_track_id(self, track_name):
-        sql = "select id from track where track_name = %s"
+        sql = "select id from tracks where track_name = %s"
         self.cursor.execute(sql, (track_name,))
         try:
             return self.cursor.fetchone()[0]
@@ -104,10 +104,10 @@ class CsvDB:
         """
         try:
             sql = """
-                  insert into track (track_name, id)
+                  insert into tracks (track_name, id)
                   select %s, nextval('seq_track_id')
                   where not exists  (select track_name
-                                     from track
+                                     from tracks
                                      where track_name = %s)
                   """
             self.cursor.execute(sql, (track, track))
