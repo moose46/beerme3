@@ -116,6 +116,18 @@ class BetData2026:
             "Track"      : "Sonoma Raceway",
             "badge_color": "bg-warning text-dark",
         }
+        self.individual_bets["07-05-2026"] = {
+            "Greg"       : "Kyle Larson",
+            "Bob"        : "Denny Hamlin",
+            "Track"      : "Chicagoland Speedway",
+            "badge_color": "bg-warning text-dark",
+        }
+        self.individual_bets["07-12-2026"] = {
+            "Greg"       : "Ryan Blaney",
+            "Bob"        : "Chase Elliot",
+            "Track"      : "EchoPark Speedway",
+            "badge_color": "bg-warning text-dark",
+        }
 
         # # start of can't pick a driver twice
 

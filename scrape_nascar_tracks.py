@@ -12,6 +12,19 @@ from bs4 import BeautifulSoup
 
 
 #  python scrape_espn.py
+import re
+
+def remove_ellipsis(text: str) -> str:
+    """
+    Remove both ASCII '...' and Unicode ellipsis '…' from the given string.
+    """
+    if not isinstance(text, str):
+        raise TypeError("Input must be a string.")
+
+    # Regex pattern matches either three or more dots, or the Unicode ellipsis
+    cleaned_text = re.sub(r"\.{3,}|…", "", text)
+    cleaned_text1 = re.sub(u'\u2026', u'', cleaned_text)
+    return cleaned_text1.strip()
 
 
 def bs(url):
@@ -31,7 +44,7 @@ def get_track_name(psoup):
     rows = psoup.find_all("tbody")
     tracks = []
     for row in rows:
-        track_data = row.find_all("td", {"data-column": "track"})
+        track_name = row.find_all("td", {"data-column": "track"})
         race_dates = row.find_all("td", {"data-column": "date"})
         race_television = row.find_all("td", {"data-column": "television"})
         race_winner = row.find_all("td", {"data-column": "winner"})
@@ -39,11 +52,13 @@ def get_track_name(psoup):
         race_name = row.find_all("td", {"data-column": "race"})
 
         for index in range(len(race_dates)):
-            a_track_dict = dict(track=track_data[index].get_text(strip=True), date=race_dates[index].get(
+            a_track_dict = dict(track=track_name[index].get_text(strip=True), date=race_dates[index].get(
                 "data-sort")[5:7] + "-" + race_dates[index].get("data-sort")[8:10] + "-" + race_dates[index].get(
                 "data-sort")[0:4], time=race_dates[index].get("data-sort")[11:19],
                                 television=race_television[index].get_text(), win_make=win_make[index].get_text(),
                                 race_winner=race_winner[index].get_text(), race_name=race_name[index].get_text())
+            a_track_dict["track"] = remove_ellipsis(a_track_dict["track"])
+            a_track_dict["race_name"] = remove_ellipsis(a_track_dict["race_name"])
             tracks.append(a_track_dict)
             # tracks.append(race_dates[index].get_text(strip=True))  # x = data_cell  #
             # tracks.append( {"track": data_cell.get_text()})  # for race_date in race_dates:  #     tracks.add(
@@ -98,8 +113,9 @@ def process_year_to_date_results(psoup):
                             cnt = 1
                             continue  # print(child)
                         cnt += 1
-                        # print(data_cell.get_text(strip=True), end="\t")
-                        csv_file.write(data_cell.get_text(strip=True) + "\t")
+                        # print(data_cell.get_text(strip=True), end="\t")'
+                        tmp = remove_ellipsis(data_cell.get_text(strip=True))
+                        csv_file.write(remove_ellipsis(data_cell.get_text(strip=True)) + "\t")
                     if cnt > 1:
                         csv_file.write("\n")
     else:
@@ -112,7 +128,7 @@ if __name__ == "__main__":
     try:
         year = int(sys.argv[1])
     except Exception as e:
-        year = 2023  # exit(f"Enter a valid race year: Example: python scrape_espn.py 2025  # \n{e.__str__()}")
+        year = 2026  # exit(f"Enter a valid race year: Example: python scrape_espn.py 2025  # \n{e.__str__()}")
 
     for year in range(year, year + 1):
         print(f"Processing year: {year}")
@@ -120,8 +136,9 @@ if __name__ == "__main__":
         try:
             if soup := bs(url):
                 track_names = get_track_name(soup)
-                for track_name in track_names:
-                    print(track_name)
+
+                for track in track_names:
+                    print(track)
                 with open(f"{TARGET_RESULTS}\\{year}_races.json", "w") as file:
                     json.dump(track_names, file, indent=4)
         except Exception as e:

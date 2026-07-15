@@ -131,4 +131,7 @@ if __name__ == "__main__":
         except Exception as e:
             exit(e.__str__())
     # copy race dates to visual studio beerme2
-    copy_race_dates(race_dates)
+    try:
+        copy_race_dates(race_dates)
+    except Exception as e:
+        exit(f"copy_race_dates: {e.__str__()}")
