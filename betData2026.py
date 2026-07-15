@@ -124,7 +124,7 @@ class BetData2026:
         }
         self.individual_bets["07-12-2026"] = {
             "Greg"       : "Ryan Blaney",
-            "Bob"        : "Chase Elliot",
+            "Bob"        : "Chase Elliott",
             "Track"      : "EchoPark Speedway",
             "badge_color": "bg-warning text-dark",
         }
@@ -142,3 +142,12 @@ class BetData2026:
         for first_pick, x in enumerate(self.individual_bets):
             self.individual_bets[x]["first_pick"] = "Greg" if first_pick % 2 else "Bob"
         return self.individual_bets
+
+if __name__ == "__main__":
+    """_summary_
+    Returns: List of races
+    """
+    bets = BetData2026()
+    results = bets.get_bets
+    for result in results:
+        print(f"{results[result]}")
