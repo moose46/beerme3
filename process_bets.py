@@ -19,7 +19,6 @@ if not file_path.exists():
         print(f"{file_path} Does Not Exist!")
         exit()
 
-
 logging.basicConfig(
     filename=log_file,
     level=logging.INFO,
@@ -53,15 +52,16 @@ class ProcessDataFiles:
     def read_data_files(self):  # sourcery skip: low-code-quality
         # print("In read_data_files")
         # find all the results for all the races in the data directory that match the 02-02-2023.csv pattern
-        for bet in self.data.individual_bets:
-            race_track = self.individual_bets[bet]["Track"]
-            race_date = bet
+        for bet in self.data.individual_bets:  # bet: '02-15-2026'
+            race_track = self.individual_bets[bet]["Track"]  # race_track 'Daytona'
+            race_date = bet  # race_date: '02-15-2026
             # Changed name to .csv files
-            results_file_name = f"*{bet}*.csv"
+            results_file_name = f"*{bet}*.csv"  # results_file_name: '*02-15-2026*.csv'
 
             print(f"1. Processing {race_track}  - {results_file_name}")
             found = False
-            for _ in file_path.glob(results_file_name):
+            for _ in file_path.glob(
+                    results_file_name):  # WindowsPath('C:/Users/me/PycharmProjects/beerme3/data/02-15-2026.csv')
                 found = True
             if not found:
                 print(f"Checking -> {results_file_name}")
@@ -82,7 +82,7 @@ class ProcessDataFiles:
                         exit()
                     # Result = namedtuple('Result', [*rawResult._fields, 'picked_by', 'race_date', 'race_track'])
                     # print(f"open ok {f.name}")
-                    for row in reader:
+                    for row in reader:  # row: ['1', 'Tyler Reddick', '45', 'Toyota', '200', '26', '1', '58', '3', '0', '']
                         # try:
                         result = rawResult(
                             *row
@@ -92,7 +92,7 @@ class ProcessDataFiles:
                         # logging.info(f"raw result: {result}")
                         # if the date is in 2024
                         if strptime(race_date, DATE_FORMAT) > strptime(
-                            "01-01-2024", DATE_FORMAT
+                                "01-01-2024", DATE_FORMAT
                         ):
                             # print(f"{bet}")
                             # logging.info(f"date {race_date} is > 01-01-2024")
@@ -103,22 +103,22 @@ class ProcessDataFiles:
                                 # the key [race_date][name] returns the driver name
                                 # print(f"name in individual_bets: {race_date} {name}")
                                 if (
-                                    self.individual_bets[race_date][name]
-                                    == result.DRIVER
+                                        self.individual_bets[race_date][name]
+                                        == result.DRIVER
                                 ):
                                     # print(f"{race_date} .... {result.DRIVER}")
-                                    parts = race_track.split(
+                                    parts = race_track.split( # parts: ['Daytona']
                                         " "
                                     )  # look to see if the filename has spaces in it
-                                    capitalized_parts = [
+                                    capitalized_parts = [ # capatalized_parts: ['Daytona']
                                         p.capitalize() for p in parts
                                     ]  # cap first letter(s) of name
                                     # add results of the race and the bet data for this player to the list of results
                                     driver_last_name = result.DRIVER.split(" ")
                                     # martin truex jr., del jr.
                                     if (
-                                        len(driver_last_name) > 2
-                                        and driver_last_name[2] == "Jr."
+                                            len(driver_last_name) > 2
+                                            and driver_last_name[2] == "Jr."
                                     ):
                                         del driver_last_name[2]
                                         # print(driver_last_name)
@@ -131,7 +131,8 @@ class ProcessDataFiles:
                                                     for word in race_track.split(" ")
                                                 ]
                                             ),
-                                            "driver_name": f'{result.DRIVER.split(" ")[len(driver_last_name)-1][:8]} {result.POS}',  # get the last name and trunc it to 8 chars
+                                            "driver_name": f'{result.DRIVER.split(" ")[len(driver_last_name) - 1][:8]} {result.POS}',
+                                            # get the last name and trunc it to 8 chars
                                             "finish": int(result.POS),
                                             "player_name": name,
                                             "beers": 1 if int(result.POS) == 0 else 0,
@@ -151,7 +152,9 @@ class ProcessDataFiles:
         )
         # return sorted_race_results
 
+
 import json
+
 if __name__ == "__main__":
     print(f"Debugging {__file__} .........")
     p = ProcessDataFiles()
