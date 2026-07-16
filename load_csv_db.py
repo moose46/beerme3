@@ -6,6 +6,7 @@ run scrape_espn.py before running this file
 
 """
 import csv
+import json
 import shutil
 from collections import defaultdict
 from pathlib import Path
@@ -14,13 +15,21 @@ from typing import Any
 import psycopg
 
 import db_connection as postgres_db
-from betData2026 import BetData2026
-from settings import TARGET_RESULTS, TARGET_BEERME_BET_DATA2026, \
-    SOURCE_BEERME_BET_DATA2026
+from settings import PYCHARM_DATA, TARGET_BEERME_BET_DATA2026, \
+    SOURCE_BEERME_BET_DATA2026, VISUAL_CODE_SOURCE_RESULTS, PYCHARM_JSON_DATA_FILE
+
+
+# C:\Users\me\PycharmProjects\BeerMe3\data\2026_bets.json
+def read_bets_JSON_DATA_FILE():
+    try:
+        with open(f'{PYCHARM_JSON_DATA_FILE}', "r") as file:
+            return json.load(file)
+    except FileNotFoundError:
+        exit(f"File {VISUAL_CODE_SOURCE_RESULTS}\\2026_bets.json does not exist")
 
 
 class CsvDB:
-    def __init__(self, bets_2026):
+    def __init__(self, bets):
         self.connection = psycopg.connect(
             dbname="beerme3",
             user="bob",
@@ -32,7 +41,7 @@ class CsvDB:
         self.cursor = self.connection.cursor()
         self.bets: dict = defaultdict(dict)
         # self.Bets = BetData()
-        self.bets = bets_2026
+        self.bets = bets
         self.track_id = 0  # current track_id
         self.tracks_found = 0
         self.results_loaded = 0
@@ -40,9 +49,9 @@ class CsvDB:
 
     def read_csv_race_results(self, abet):
         # abet is one bet from a list of bets
-        results_file_name: str = f"{TARGET_RESULTS}\\{abet}.csv"
+        results_file_name: str = f"{PYCHARM_DATA}\\{abet}.csv"
         track_id = self.get_track_id(track_name=self.bets[abet]["Track"])
-        with open(Path(f"{TARGET_RESULTS}\\{abet}.csv"), "r") as file:
+        with open(Path(f"{VISUAL_CODE_SOURCE_RESULTS}\\{abet}.csv"), "r") as file:
             reader = csv.DictReader(file, delimiter="\t")
             for row in reader:
                 bob_pick = False
@@ -142,22 +151,54 @@ class CsvDB:
 def copy_race_bets():
     my_file = Path(f"{SOURCE_BEERME_BET_DATA2026}")
     if my_file.is_file():
-        print(
-            f"-- Copying {Path(my_file)} to \n "
-            f"{TARGET_BEERME_BET_DATA2026}")
-        shutil.copy2(f"{SOURCE_BEERME_BET_DATA2026}",
-                     f"{TARGET_BEERME_BET_DATA2026}")  # copy2 preserves
+        try:
+            print(
+                f"-- Copying {Path(my_file)} to "
+                f"{TARGET_BEERME_BET_DATA2026}"
+            )
+            shutil.copy2(f"{SOURCE_BEERME_BET_DATA2026}",
+                         f"{TARGET_BEERME_BET_DATA2026}")  # copy2 preserves
+            print(
+                f"\n-- Copying {Path(PYCHARM_JSON_DATA_FILE)} to  "
+                f"{VISUAL_CODE_SOURCE_RESULTS}"
+            )
+
+            shutil.copy2(f"{PYCHARM_JSON_DATA_FILE}",
+                         f"{VISUAL_CODE_SOURCE_RESULTS}\\")  # copy2 preserves
+        except Exception as e2:
+            exit(e2.__str__())
+
+
+def convert_json_file():
+    new_bet = {}
+    try:
+        with open(f'{PYCHARM_JSON_DATA_FILE}', "r") as file:
+            data = json.load(file)
+            bet_json_list = []
+            for bet in data:
+                # print(bet)
+                new_bet['race_date'] = bet['race_date']
+                new_bet['drivers'] = {}
+                new_bet['drivers']['Greg'] = bet['Greg']
+                new_bet['drivers']['Bob'] = bet['Bob']
+                new_bet['track'] = bet['Track']
+                # print(new_bet)
+                bet_json_list.append(new_bet)
+        with open(f'test.json', "w") as file:
+            x = json.dump(bet_json_list, file, indent=4)
+        # print(x)
+    except Exception as e:
+        exit(e.__str__())
 
 
 if __name__ == "__main__":
     db = postgres_db.PostgreSQL()
-    # load data from betData2026.py
-    bets = BetData2026()
-    # hydrate the CsvDB class with the bet data from betData2026
-    loader = CsvDB(bets_2026=bets.get_bets)
-    for bet in loader.get_bets:
-        hydrated = loader.hydrate_track_table(loader.bets[bet]["Track"])
-        if not loader.check_if_race_is_already_loaded(bet):
+    # hydrate the CsvDB class with the bet data from bets
+    bets = read_bets_JSON_DATA_FILE()
+    loader = CsvDB(bets=bets)
+    for bet in bets:
+        hydrated = loader.hydrate_track_table(bet["track"])
+        if not loader.check_if_race_is_already_loaded(bet["race_date"]):
             try:
                 print(loader.read_csv_race_results(bet))
             except Exception as e:
@@ -167,3 +208,4 @@ if __name__ == "__main__":
     print(f"{loader.races_scored} races scored")
     print(f"{loader.results_loaded} results loaded")
     copy_race_bets()
+    # convert_json_file()
