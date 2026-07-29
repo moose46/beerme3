@@ -1,242 +1,402 @@
 [
     {
-        "race_date": "07-12-2026",
-        "drivers": {
-            "Greg": {
-                "Driver": "Ryan Blaney"
-            },
-            "Bob": {
-                "Driver": "Chase Elliott"
-            }
-        },
-        "track": "EchoPark Speedway"
+        "race_date": "02-15-2026",
+        "race_track": "Daytona",
+        "driver_name": "Blaney 27",
+        "finish": 27,
+        "player_name": "Bob",
+        "beers": 0,
+        "car_number": "12",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "02-15-2026",
+        "race_track": "Daytona",
+        "driver_name": "Byron 12",
+        "finish": 12,
+        "player_name": "Greg",
+        "beers": 0,
+        "car_number": "24",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "02-22-2026",
+        "race_track": "Atlanta",
+        "driver_name": "Elliott 11",
+        "finish": 11,
+        "player_name": "Bob",
+        "beers": 0,
+        "car_number": "9",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "02-22-2026",
+        "race_track": "Atlanta",
+        "driver_name": "Blaney 10",
+        "finish": 10,
+        "player_name": "Greg",
+        "beers": 0,
+        "car_number": "12",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "03-01-2026",
+        "race_track": "Cota",
+        "driver_name": "Reddick 1",
+        "finish": 1,
+        "player_name": "Bob",
+        "beers": 0,
+        "car_number": "45",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "03-01-2026",
+        "race_track": "Cota",
+        "driver_name": "Gisberge 2",
+        "finish": 2,
+        "player_name": "Greg",
+        "beers": 0,
+        "car_number": "97",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "03-08-2026",
+        "race_track": "Phoenix",
+        "driver_name": "Larson 3",
+        "finish": 3,
+        "player_name": "Bob",
+        "beers": 0,
+        "car_number": "5",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "03-08-2026",
+        "race_track": "Phoenix",
+        "driver_name": "Blaney 1",
+        "finish": 1,
+        "player_name": "Greg",
+        "beers": 0,
+        "car_number": "12",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "03-15-2026",
+        "race_track": "Las Vegas",
+        "driver_name": "Bell 4",
+        "finish": 4,
+        "player_name": "Bob",
+        "beers": 0,
+        "car_number": "20",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "03-15-2026",
+        "race_track": "Las Vegas",
+        "driver_name": "Larson 7",
+        "finish": 7,
+        "player_name": "Greg",
+        "beers": 0,
+        "car_number": "5",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "03-22-2026",
+        "race_track": "Darlington",
+        "driver_name": "Reddick 1",
+        "finish": 1,
+        "player_name": "Bob",
+        "beers": 0,
+        "car_number": "45",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "03-22-2026",
+        "race_track": "Darlington",
+        "driver_name": "Hamlin 11",
+        "finish": 11,
+        "player_name": "Greg",
+        "beers": 0,
+        "car_number": "11",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "03-29-2026",
+        "race_track": "Martinsville",
+        "driver_name": "Hamlin 2",
+        "finish": 2,
+        "player_name": "Bob",
+        "beers": 0,
+        "car_number": "11",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "03-29-2026",
+        "race_track": "Martinsville",
+        "driver_name": "Byron 5",
+        "finish": 5,
+        "player_name": "Greg",
+        "beers": 0,
+        "car_number": "24",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "04-12-2026",
+        "race_track": "Bristol",
+        "driver_name": "Gibbs 1",
+        "finish": 1,
+        "player_name": "Bob",
+        "beers": 0,
+        "car_number": "54",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "04-12-2026",
+        "race_track": "Bristol",
+        "driver_name": "Larson 3",
+        "finish": 3,
+        "player_name": "Greg",
+        "beers": 0,
+        "car_number": "5",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "04-19-2026",
+        "race_track": "Kansas",
+        "driver_name": "Reddick 1",
+        "finish": 1,
+        "player_name": "Bob",
+        "beers": 0,
+        "car_number": "45",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "04-19-2026",
+        "race_track": "Kansas",
+        "driver_name": "Larson 2",
+        "finish": 2,
+        "player_name": "Greg",
+        "beers": 0,
+        "car_number": "5",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "04-26-2026",
+        "race_track": "Talladega",
+        "driver_name": "Reddick 14",
+        "finish": 14,
+        "player_name": "Bob",
+        "beers": 0,
+        "car_number": "45",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "04-26-2026",
+        "race_track": "Talladega",
+        "driver_name": "Blaney 37",
+        "finish": 37,
+        "player_name": "Greg",
+        "beers": 0,
+        "car_number": "12",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "05-03-2026",
+        "race_track": "Texas",
+        "driver_name": "Hocevar 7",
+        "finish": 7,
+        "player_name": "Bob",
+        "beers": 0,
+        "car_number": "77",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "05-03-2026",
+        "race_track": "Texas",
+        "driver_name": "Hamlin 2",
+        "finish": 2,
+        "player_name": "Greg",
+        "beers": 0,
+        "car_number": "11",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "05-10-2026",
+        "race_track": "Watkins Gleen",
+        "driver_name": "Gibbs 3",
+        "finish": 3,
+        "player_name": "Bob",
+        "beers": 0,
+        "car_number": "54",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "05-10-2026",
+        "race_track": "Watkins Gleen",
+        "driver_name": "Gisberge 1",
+        "finish": 1,
+        "player_name": "Greg",
+        "beers": 0,
+        "car_number": "97",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "05-24-2026",
+        "race_track": "Charlotte",
+        "driver_name": "Chastain 35",
+        "finish": 35,
+        "player_name": "Bob",
+        "beers": 0,
+        "car_number": "1",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "05-24-2026",
+        "race_track": "Charlotte",
+        "driver_name": "Hamlin 3",
+        "finish": 3,
+        "player_name": "Greg",
+        "beers": 0,
+        "car_number": "11",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "05-31-2026",
+        "race_track": "Nashville",
+        "driver_name": "Hamlin 1",
+        "finish": 1,
+        "player_name": "Bob",
+        "beers": 0,
+        "car_number": "11",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "05-31-2026",
+        "race_track": "Nashville",
+        "driver_name": "Reddick 6",
+        "finish": 6,
+        "player_name": "Greg",
+        "beers": 0,
+        "car_number": "45",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "06-07-2026",
+        "race_track": "Michigan",
+        "driver_name": "Reddick 35",
+        "finish": 35,
+        "player_name": "Bob",
+        "beers": 0,
+        "car_number": "45",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "06-07-2026",
+        "race_track": "Michigan",
+        "driver_name": "Larson 4",
+        "finish": 4,
+        "player_name": "Greg",
+        "beers": 0,
+        "car_number": "5",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "06-14-2026",
+        "race_track": "Pocono",
+        "driver_name": "Briscoe 12",
+        "finish": 12,
+        "player_name": "Bob",
+        "beers": 0,
+        "car_number": "19",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "06-14-2026",
+        "race_track": "Pocono",
+        "driver_name": "Hamlin 1",
+        "finish": 1,
+        "player_name": "Greg",
+        "beers": 0,
+        "car_number": "11",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "06-21-2026",
+        "race_track": "Coronado",
+        "driver_name": "Gisberge 38",
+        "finish": 38,
+        "player_name": "Bob",
+        "beers": 0,
+        "car_number": "97",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "06-21-2026",
+        "race_track": "Coronado",
+        "driver_name": "Zilisch 37",
+        "finish": 37,
+        "player_name": "Greg",
+        "beers": 0,
+        "car_number": "88",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "06-28-2026",
+        "race_track": "Sonoma Raceway",
+        "driver_name": "Larson 4",
+        "finish": 4,
+        "player_name": "Bob",
+        "beers": 0,
+        "car_number": "5",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "06-28-2026",
+        "race_track": "Sonoma Raceway",
+        "driver_name": "Gisberge 1",
+        "finish": 1,
+        "player_name": "Greg",
+        "beers": 0,
+        "car_number": "97",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "07-05-2026",
+        "race_track": "Chicagoland Speedway",
+        "driver_name": "Hamlin 3",
+        "finish": 3,
+        "player_name": "Bob",
+        "beers": 0,
+        "car_number": "11",
+        "badge_color": "bg-warning text-dark"
+    },
+    {
+        "race_date": "07-05-2026",
+        "race_track": "Chicagoland Speedway",
+        "driver_name": "Larson 34",
+        "finish": 34,
+        "player_name": "Greg",
+        "beers": 0,
+        "car_number": "5",
+        "badge_color": "bg-warning text-dark"
     },
     {
         "race_date": "07-12-2026",
-        "drivers": {
-            "Greg": {
-                "Driver": "Ryan Blaney"
-            },
-            "Bob": {
-                "Driver": "Chase Elliott"
-            }
-        },
-        "track": "EchoPark Speedway"
+        "race_track": "Echopark Speedway",
+        "driver_name": "Elliott 13",
+        "finish": 13,
+        "player_name": "Bob",
+        "beers": 0,
+        "car_number": "9",
+        "badge_color": "bg-warning text-dark"
     },
     {
         "race_date": "07-12-2026",
-        "drivers": {
-            "Greg": {
-                "Driver": "Ryan Blaney"
-            },
-            "Bob": {
-                "Driver": "Chase Elliott"
-            }
-        },
-        "track": "EchoPark Speedway"
-    },
-    {
-        "race_date": "07-12-2026",
-        "drivers": {
-            "Greg": {
-                "Driver": "Ryan Blaney"
-            },
-            "Bob": {
-                "Driver": "Chase Elliott"
-            }
-        },
-        "track": "EchoPark Speedway"
-    },
-    {
-        "race_date": "07-12-2026",
-        "drivers": {
-            "Greg": {
-                "Driver": "Ryan Blaney"
-            },
-            "Bob": {
-                "Driver": "Chase Elliott"
-            }
-        },
-        "track": "EchoPark Speedway"
-    },
-    {
-        "race_date": "07-12-2026",
-        "drivers": {
-            "Greg": {
-                "Driver": "Ryan Blaney"
-            },
-            "Bob": {
-                "Driver": "Chase Elliott"
-            }
-        },
-        "track": "EchoPark Speedway"
-    },
-    {
-        "race_date": "07-12-2026",
-        "drivers": {
-            "Greg": {
-                "Driver": "Ryan Blaney"
-            },
-            "Bob": {
-                "Driver": "Chase Elliott"
-            }
-        },
-        "track": "EchoPark Speedway"
-    },
-    {
-        "race_date": "07-12-2026",
-        "drivers": {
-            "Greg": {
-                "Driver": "Ryan Blaney"
-            },
-            "Bob": {
-                "Driver": "Chase Elliott"
-            }
-        },
-        "track": "EchoPark Speedway"
-    },
-    {
-        "race_date": "07-12-2026",
-        "drivers": {
-            "Greg": {
-                "Driver": "Ryan Blaney"
-            },
-            "Bob": {
-                "Driver": "Chase Elliott"
-            }
-        },
-        "track": "EchoPark Speedway"
-    },
-    {
-        "race_date": "07-12-2026",
-        "drivers": {
-            "Greg": {
-                "Driver": "Ryan Blaney"
-            },
-            "Bob": {
-                "Driver": "Chase Elliott"
-            }
-        },
-        "track": "EchoPark Speedway"
-    },
-    {
-        "race_date": "07-12-2026",
-        "drivers": {
-            "Greg": {
-                "Driver": "Ryan Blaney"
-            },
-            "Bob": {
-                "Driver": "Chase Elliott"
-            }
-        },
-        "track": "EchoPark Speedway"
-    },
-    {
-        "race_date": "07-12-2026",
-        "drivers": {
-            "Greg": {
-                "Driver": "Ryan Blaney"
-            },
-            "Bob": {
-                "Driver": "Chase Elliott"
-            }
-        },
-        "track": "EchoPark Speedway"
-    },
-    {
-        "race_date": "07-12-2026",
-        "drivers": {
-            "Greg": {
-                "Driver": "Ryan Blaney"
-            },
-            "Bob": {
-                "Driver": "Chase Elliott"
-            }
-        },
-        "track": "EchoPark Speedway"
-    },
-    {
-        "race_date": "07-12-2026",
-        "drivers": {
-            "Greg": {
-                "Driver": "Ryan Blaney"
-            },
-            "Bob": {
-                "Driver": "Chase Elliott"
-            }
-        },
-        "track": "EchoPark Speedway"
-    },
-    {
-        "race_date": "07-12-2026",
-        "drivers": {
-            "Greg": {
-                "Driver": "Ryan Blaney"
-            },
-            "Bob": {
-                "Driver": "Chase Elliott"
-            }
-        },
-        "track": "EchoPark Speedway"
-    },
-    {
-        "race_date": "07-12-2026",
-        "drivers": {
-            "Greg": {
-                "Driver": "Ryan Blaney"
-            },
-            "Bob": {
-                "Driver": "Chase Elliott"
-            }
-        },
-        "track": "EchoPark Speedway"
-    },
-    {
-        "race_date": "07-12-2026",
-        "drivers": {
-            "Greg": {
-                "Driver": "Ryan Blaney"
-            },
-            "Bob": {
-                "Driver": "Chase Elliott"
-            }
-        },
-        "track": "EchoPark Speedway"
-    },
-    {
-        "race_date": "07-12-2026",
-        "drivers": {
-            "Greg": {
-                "Driver": "Ryan Blaney"
-            },
-            "Bob": {
-                "Driver": "Chase Elliott"
-            }
-        },
-        "track": "EchoPark Speedway"
-    },
-    {
-        "race_date": "07-12-2026",
-        "drivers": {
-            "Greg": {
-                "Driver": "Ryan Blaney"
-            },
-            "Bob": {
-                "Driver": "Chase Elliott"
-            }
-        },
-        "track": "EchoPark Speedway"
-    },
-    {
-        "race_date": "07-12-2026",
-        "drivers": {
-            "Greg": {
-                "Driver": "Ryan Blaney"
-            },
-            "Bob": {
-                "Driver": "Chase Elliott"
-            }
-        },
-        "track": "EchoPark Speedway"
+        "race_track": "Echopark Speedway",
+        "driver_name": "Blaney 1",
+        "finish": 1,
+        "player_name": "Greg",
+        "beers": 0,
+        "car_number": "12",
+        "badge_color": "bg-warning text-dark"
     }
 ]

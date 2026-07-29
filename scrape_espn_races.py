@@ -4,12 +4,15 @@ import collections
 import json
 import sys
 import datetime as datetime
+
 collections.Callable = collections.abc.Callable
 from settings import SOURCE_BEERME_BET_DATA2026, HEADERS
 import requests
 from bs4 import BeautifulSoup
 
 ESPN_RACING_RESULTS = "https://www.espn.com/racing/results/_/year/"
+
+
 #  python scrape_espn.py
 
 
@@ -36,13 +39,15 @@ def get_track_name(psoup):
         if skip <= 2:
             skip += 1
             continue
-        race_date = datetime.datetime.strptime(track_name[0].text, "%a, %b %d").date()
+        race_date = datetime.datetime.strptime(track_name[0].text + " 2026", "%a, %b %d %Y").date()
         race_name = track_name[1].find_all("a")[0].text
         race_results = track_name[1].find_all("a")[0]["href"]
         race_name = race_name.replace("NASCAR Cup Series at ", "")
         # replace the year with the query year
-        race_date = race_date.replace(year=datetime.datetime.now().year)
-        races.append(race_date.strftime("%d/%m/%Y"))
+        # race_date = race_date.replace(year=datetime.datetime.now().year)
+        races.append(
+            {"race_date": race_date.strftime("%m/%d/%Y"), "race_name": race_name, "race_results": race_results,
+             "greg": {'driver': '', 'finish': 0}, "bob": {'driver': '', 'finish': 0}})
     return races
 
 
@@ -63,7 +68,7 @@ if __name__ == "__main__":
                 for track in track_names:
                     print(track)
 
-                with open(f"{SOURCE_BEERME_BET_DATA2026}\\{year}_races.json", "w") as file:
+                with open(f"{year}_races.json", "w") as file:
                     json.dump(track_names, file, indent=4)
         except Exception as e:
             exit(e.__str__())
