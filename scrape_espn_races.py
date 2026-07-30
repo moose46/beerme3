@@ -1,9 +1,16 @@
 # https://stackoverflow.com/questions/69515086/error-attributeerror
 # -collections-has-no-attribute-callable-using-beautifu
+
+"""
+Create YYYY_bets.json file for the year provided
+
+"""
+
 import collections
 import json
 import sys
 import datetime as datetime
+import re
 
 collections.Callable = collections.abc.Callable
 from settings import SOURCE_BEERME_BET_DATA2026, HEADERS
@@ -30,7 +37,7 @@ def bs(url):
         return None
 
 
-def get_track_name(psoup):
+def get_track_name(psoup, year):
     rows = psoup.find_all("tr")
     races = []
     skip = 1
@@ -39,14 +46,17 @@ def get_track_name(psoup):
         if skip <= 2:
             skip += 1
             continue
-        race_date = datetime.datetime.strptime(track_name[0].text + " 2026", "%a, %b %d %Y").date()
+        race_date = datetime.datetime.strptime(track_name[0].text + f" {year}", "%a, %b %d %Y").date()
+
         race_name = track_name[1].find_all("a")[0].text
+        # get the race track name
+        race_track = track_name[1].text
+        # remove the race name, and only the track name is left
+        race_track = re.sub(f"{race_name}", "", race_track)
         race_results = track_name[1].find_all("a")[0]["href"]
-        race_name = race_name.replace("NASCAR Cup Series at ", "")
-        # replace the year with the query year
-        # race_date = race_date.replace(year=datetime.datetime.now().year)
         races.append(
-            {"race_date": race_date.strftime("%m/%d/%Y"), "race_name": race_name, "race_results": race_results,
+            {"race_date": race_date.strftime("%m/%d/%Y"), "race_track": race_track, "race_results": race_results,
+             "race_name": race_name,
              "greg": {'driver': '', 'finish': 0}, "bob": {'driver': '', 'finish': 0}})
     return races
 
@@ -56,14 +66,14 @@ if __name__ == "__main__":
     try:
         year = int(sys.argv[1])
     except Exception as e:
-        year = 2026  # exit(f"Enter a valid race year: Example: python scrape_espn.py 2025  # \n{e.__str__()}")
+        year = 2025  # exit(f"Enter a valid race year: Example: python scrape_espn.py 2025  # \n{e.__str__()}")
 
     for year in range(year, year + 1):
         print(f"Processing year: {year}")
         url = f"{ESPN_RACING_RESULTS}{year}"
         try:
             if soup := bs(url):
-                track_names = get_track_name(soup)
+                track_names = get_track_name(soup,year= year)
 
                 for track in track_names:
                     print(track)
