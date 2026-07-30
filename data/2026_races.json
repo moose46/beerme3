@@ -9,7 +9,7 @@
         "race_name": "COOKOUT Clash"
     },
     {
-        "track": "Daytona International Spe",
+        "track": "Daytona International Spe\u2026",
         "date": "02-12-2026",
         "time": "00:00:00",
         "television": "FS1",
@@ -18,7 +18,7 @@
         "race_name": "Duel 1 at Daytona"
     },
     {
-        "track": "Daytona International Spe",
+        "track": "Daytona International Spe\u2026",
         "date": "02-12-2026",
         "time": "00:00:00",
         "television": "FS1",
@@ -27,7 +27,7 @@
         "race_name": "Duel 2 at Daytona"
     },
     {
-        "track": "Daytona International Spe",
+        "track": "Daytona International Spe\u2026",
         "date": "02-15-2026",
         "time": "14:30:00",
         "television": "FOX",
@@ -51,7 +51,7 @@
         "television": "FOX",
         "win_make": "Toyota",
         "race_winner": "Tyler Reddick",
-        "race_name": "DuraMAX Grand Prix Powered by"
+        "race_name": "DuraMAX Grand Prix Powered by \u2026"
     },
     {
         "track": "Phoenix Raceway",
@@ -126,7 +126,7 @@
         "race_name": "Wurth 400"
     },
     {
-        "track": "Watkins Glen Internationa",
+        "track": "Watkins Glen Internationa\u2026",
         "date": "05-10-2026",
         "time": "15:00:00",
         "television": "FS1",
@@ -162,7 +162,7 @@
         "race_name": "Cracker Barrel 400"
     },
     {
-        "track": "Michigan International Sp",
+        "track": "Michigan International Sp\u2026",
         "date": "06-07-2026",
         "time": "15:00:00",
         "television": "Amazon Prime",
@@ -177,7 +177,7 @@
         "television": "Amazon Prime",
         "win_make": "Toyota",
         "race_winner": "Denny Hamlin",
-        "race_name": "Great American Getaway 400 pre"
+        "race_name": "Great American Getaway 400 pre\u2026"
     },
     {
         "track": "Coronado Street Course",
@@ -200,32 +200,32 @@
     {
         "track": "Chicagoland Speedway",
         "date": "07-05-2026",
-        "time": "18:00:00",
+        "time": "00:00:00",
         "television": "TNT Sports",
-        "win_make": "Toyota",
-        "race_winner": "Chase Briscoe",
-        "race_name": "eero 400"
+        "win_make": "",
+        "race_winner": "",
+        "race_name": "CHICAGOLAND"
     },
     {
         "track": "Atlanta Motor Speedway",
         "date": "07-12-2026",
-        "time": "19:00:00",
+        "time": "00:00:00",
         "television": "TNT Sports",
-        "win_make": "Ford",
-        "race_winner": "Ryan Blaney",
-        "race_name": "Quaker State 400 Available at"
+        "win_make": "",
+        "race_winner": "",
+        "race_name": "Quaker State 400 Available at \u2026"
     },
     {
         "track": "North Wilkesboro Speedway",
         "date": "07-19-2026",
-        "time": "19:00:00",
+        "time": "00:00:00",
         "television": "TNT Sports",
         "win_make": "",
         "race_winner": "",
-        "race_name": "Window World 450"
+        "race_name": "Window World 400"
     },
     {
-        "track": "Indianapolis Motor Speedw",
+        "track": "Indianapolis Motor Speedw\u2026",
         "date": "07-26-2026",
         "time": "00:00:00",
         "television": "TNT Sports",
@@ -240,7 +240,7 @@
         "television": "USA",
         "win_make": "",
         "race_winner": "",
-        "race_name": "Iowa Corn 350 Powered by Ethan"
+        "race_name": "Iowa Corn 350 Powered by Ethan\u2026"
     },
     {
         "track": "Richmond Raceway",
@@ -252,7 +252,7 @@
         "race_name": "Cook Out 400"
     },
     {
-        "track": "New Hampshire Motor Speed",
+        "track": "New Hampshire Motor Speed\u2026",
         "date": "08-23-2026",
         "time": "00:00:00",
         "television": "USA",
@@ -261,7 +261,7 @@
         "race_name": "NEW HAMPSHIRE"
     },
     {
-        "track": "Daytona International Spe",
+        "track": "Daytona International Spe\u2026",
         "date": "08-29-2026",
         "time": "00:00:00",
         "television": "NBC",
@@ -279,7 +279,7 @@
         "race_name": "Cook Out Southern 500"
     },
     {
-        "track": "World Wide Technology Rac",
+        "track": "World Wide Technology Rac\u2026",
         "date": "09-13-2026",
         "time": "00:00:00",
         "television": "USA",
@@ -357,6 +357,6 @@
         "television": "NBC",
         "win_make": "",
         "race_winner": "",
-        "race_name": "NASCAR Cup Series Championship"
+        "race_name": "NASCAR Cup Series Championship\u2026"
     }
 ]

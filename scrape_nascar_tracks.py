@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 collections.Callable = collections.abc.Callable
-from settings import TARGET_RESULTS, HEADERS, TRACK_HOST
+from settings import SOURCE_BEERME_BET_DATA2026, HEADERS, TRACK_HOST
 import requests
 from bs4 import BeautifulSoup
 
@@ -90,7 +90,7 @@ def process_year_to_date_results(psoup):
         month = url_id[4:6]
         day = url_id[6:8]
         # print(f"year={year} month={month} day={day}")
-        output_file_name = f"{TARGET_RESULTS}/{month}-{day}-{year}.csv"
+        output_file_name = f"{SOURCE_BEERME_BET_DATA2026}/{month}-{day}-{year}.csv"
         # Create a list of race dates
         race_dates.append(f"{month}-{day}-{year}.csv")
 
@@ -139,7 +139,8 @@ if __name__ == "__main__":
 
                 for track in track_names:
                     print(track)
-                with open(f"{TARGET_RESULTS}\\{year}_races.json", "w") as file:
+
+                with open(f"{SOURCE_BEERME_BET_DATA2026}\\{year}_races.json", "w") as file:
                     json.dump(track_names, file, indent=4)
         except Exception as e:
             exit(e.__str__())

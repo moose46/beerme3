@@ -399,4 +399,28 @@
         "car_number": "12",
         "badge_color": "bg-warning text-dark"
     }
+    {
+        "race_date": "07-19-2026",
+        "drivers": {
+            "Greg": {
+                "Driver": "William Byron"
+            },
+            "Bob": {
+                "Driver": "Christopher Bell"
+            }
+        },
+        "track": "Darlington"
+    }
+    {
+        "race_date": "07-26-2026",
+        "drivers": {
+            "Greg": {
+                "Driver": "Denny Hamlin"
+            },
+            "Bob": {
+                "Driver": "Carson Hocevar"
+            }
+        },
+        "track": "Indy"
+    }
 ]
