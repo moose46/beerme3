@@ -12,7 +12,7 @@ import json
 import sys
 import datetime as datetime
 import re
-
+from bs4 import BeautifulSoup
 collections.Callable = collections.abc.Callable
 from settings import SOURCE_BEERME_BET_DATA2026, HEADERS
 import requests
@@ -22,9 +22,44 @@ ESPN_RACING_RESULTS = "https://www.espn.com/racing/results/_/year/"
 
 
 #  python scrape_espn.py
+def bs(url):
+    response = requests.get(url, headers=HEADERS)
+    print(f"{response}")
+    if response.status_code in [200]:
+        soup_is_ready = BeautifulSoup(response.content, "html.parser")
+        # print(response.status_code)
+        return soup_is_ready
+    elif response.status_code == 202:
+        exit(f"No data found for {url}, response_code = {response.status_code}")
+    else:
+        print(f"Failed to retrieve data from {url}")
+        return None
+
+def get_race_results(url):
+        hot_soup = bs(url)
+        cnt = 0
+        if hot_soup:
+            # csv_file = open(output_file_name, "w")
+            if table_rows := hot_soup.find_all("tr"):
+                for tr in table_rows:
+                    for data_cell in tr.find_all("td"):
+                        if cnt == 0:
+                            cnt = 1
+                            continue
+                            # print(child)
+                        cnt += 1
+                        # print(data_cell.get_text(strip=True), end="\t")
+                        # csv_file.write(data_cell.get_text(strip=True) + "\t")
+                    if cnt > 1:
+                        pass
+                        # csv_file.write("\n")
+        else:
+            print(f"End of {url} results.")
+        return
 
 
-def get_track_name(psoup, year):
+def get_track_names( url, year):
+    psoup = bs(url)
     rows = psoup.find_all("tr")
     races = []
     skip = 1
@@ -47,7 +82,7 @@ def get_track_name(psoup, year):
              "greg": {'driver': '', 'finish': 0}, "bob": {'driver': '', 'finish': 0}})
     return races
 
-from .soup import bs
+
 def hydrate_race_json():
     race_dates = []
     try:
