@@ -107,7 +107,7 @@ def process_year_to_date_results(psoup):
     return race_dates
 
 if __name__ == "__main__":
-    conn = sqlite3.connect('./data/bets.db')
+    conn = sqlite3.connect('bets.db')
     cursor = conn.cursor()
     with open('./json/2026_races.json') as f:
         data = json.load(f)

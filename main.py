@@ -6,11 +6,16 @@ import sys
 import collections
 # import requests
 from settings import TRACK_HOST
+import logging
+
 ESPN_RACING_RESULTS = "https://www.espn.com/racing/results/_/year/"
 collections.Callable = collections.abc.Callable
 import data_operations.beerme as beerme
 import data_operations.db_hydrate as db_hyd
 if __name__ == "__main__":
+    logger = logging.getLogger(__name__)
+    logging.basicConfig(filename='beerme.log', level=logging.INFO, filemode='w')
+    logger.info('Started')
     year = datetime.now().year
     try:
         year = int(sys.argv[1])
@@ -18,7 +23,7 @@ if __name__ == "__main__":
         pass
 
     url = f"{ESPN_RACING_RESULTS}/{year}"
-    print(url)
+    logger.info(f"Getting tracks from {url}")
     try:
         # create json/YYYY_races.json
         track_names = beerme.get_track_names( url, year)

@@ -1,9 +1,20 @@
+import logging
 import sqlite3
 from sqlite3 import Error
 import json
+DB_FILENAME = "bets.db"
+import logging
 
-conn = sqlite3.connect('./data/bets.db')
-cursor = conn.cursor()
+logger = logging.getLogger(__name__)
+logging.basicConfig(filename='db_hydrate.log', level=logging.INFO, filemode='w')
+logger.info('Started')
+
+try:
+    conn = sqlite3.connect(DB_FILENAME)
+    cursor = conn.cursor()
+except Error as e:
+    print(f"Error: {DB_FILENAME} {e}")
+    exit()
 
 def hydrate_race_results(data):
     hot_soup = bs(the_url)
@@ -47,8 +58,8 @@ def hydrate_races(races):
             cursor.execute(insert_query, data_tuple)
             conn.commit()
         except Error as e:
-            print(e)
-
+            # print(f"{data_tuple} {e}")
+            logger.error(f"{data_tuple} {e}")
 
 def hydrate_tracks(data):
     insert_query = """
@@ -62,6 +73,7 @@ def hydrate_tracks(data):
             conn.commit()
             print(f"{track['race_track']} Created")
         except Error as e:
-            print(f"{data_tuple} {e}")
+            # print(f"{hydrate_tracks} {data_tuple} {e}")
+            logger.error(f"{hydrate_tracks} {data_tuple} {e}")
             # pass
     # hydrate_races_db(conn, cursor, race,track_id[0])
