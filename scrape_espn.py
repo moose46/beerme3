@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 collections.Callable = collections.abc.Callable
-from settings import TARGET_RESULTS, TARGET_RESULTS_BEER_ME, HOST, HEADERS
+from settings import HOST, HEADERS
 import requests
 from bs4 import BeautifulSoup
 
@@ -135,3 +135,24 @@ if __name__ == "__main__":
         copy_race_dates(race_dates)
     except Exception as e:
         exit(f"copy_race_dates: {e.__str__()}")
+if __name__ == "__main__":
+    race_dates = []
+    try:
+        year = int(sys.argv[1])
+    except Exception as e:
+        year = 2025  # exit(f"Enter a valid race year: Example: python scrape_espn.py 2025  # \n{e.__str__()}")
+
+    for year in range(year, year + 1):
+        print(f"Processing year: {year}")
+        url = f"{ESPN_RACING_RESULTS}{year}"
+        try:
+            if soup := bs(url):
+                track_names = get_track_name(soup,year= year)
+
+                for track in track_names:
+                    print(track)
+
+                with open(f"{year}_races.json", "w") as file:
+                    json.dump(track_names, file, indent=4)
+        except Exception as e:
+            exit(e.__str__())

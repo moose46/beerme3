@@ -8,27 +8,27 @@ after running this program, then run load_tracks_db.py
 """
 
 import collections
-import json
-import sys
 import datetime as datetime
+import json
 import re
-from bs4 import BeautifulSoup
+import sys
+
 collections.Callable = collections.abc.Callable
-from settings import SOURCE_BEERME_BET_DATA2026, HEADERS
+from settings import HEADERS
 import requests
 from bs4 import BeautifulSoup
 
 ESPN_RACING_RESULTS = "https://www.espn.com/racing/results/_/year/"
-POS=0
-DRIVER=1
-CAR=2
-MANUFACTURER=3
-LAPS=4
-START=5
-LED=6
-PTS=7
-BONUS=8
-PENALITY=9
+POS = 0
+DRIVER = 1
+CAR = 2
+MANUFACTURER = 3
+LAPS = 4
+START = 5
+LED = 6
+PTS = 7
+BONUS = 8
+PENALITY = 9
 
 
 #  python scrape_espn.py
@@ -45,43 +45,56 @@ def bs(url):
         print(f"Failed to retrieve data from {url}")
         return None
 
+
 def get_race_results(url):
-        hot_soup = bs(url)
-        cnt = 0
-        if hot_soup:
-            row = 0
-            # csv_file = open(output_file_name, "w")
-            if table_rows := hot_soup.find_all("tr"):
-                for tr in table_rows:
-                    row += 1
-                    if row  < 2:
-                        continue
-                    try:
-                        # tr.find_all('td')
-                        # tr.find_all('a')[0].get_text()
-                        # tr.find_all('td')[1].find('a').get('href')
-                        print(f"{tr.find_all('td')}")
-                    except Exception as e:
-                        print(f"Failed to retrieve {tr[POS]} {e.__repr__()}")
-                        exit(e.__str__())
-                    # for data_cell in tr.find_all("td"):
-                    #     if cnt == 0:
-                    #         cnt = 1
-                    #         continue
-                    #         # print(child)
-                    #     cnt += 1
-                    #     print(data_cell.get_text(strip=True), end="\t")
-                    #     # csv_file.write(data_cell.get_text(strip=True) + "\t")
-                    # if cnt > 1:
-                    #     pass
-                    #     print()
-                    #     # csv_file.write("\n")
-        else:
-            print(f"End of {url} results.")
-        return
+    hot_soup = bs(url)
+    cnt = 0
+    if hot_soup:
+        row = 0
+        # csv_file = open(output_file_name, "w")
+        if table_rows := hot_soup.find_all("tr"):
+            for tr in table_rows:
+                row += 1
+                if row < 2:
+                    continue
+                try:
+                    # tr.find_all('td')
+                    # position =  tr.find_all('a')[POS].get_text()
+                    # tr.find_all('td')[1].find('a').get('href')
+                    print(
+                        f"{tr.find_all('td')[POS].get_text()} {tr.find_all('td')[DRIVER].get_text()} "
+                        f"{tr.find_all('td')[CAR].get_text()} {tr.find_all('td')[MANUFACTURER].get_text()} "
+                        f"{tr.find_all('td')[LAPS].get_text()} {tr.find_all('td')[START].get_text()} "
+                        f"{tr.find_all('td')[LED].get_text()} {tr.find_all('td')[PTS].get_text()} "
+                        f"{tr.find_all('td')[BONUS].get_text()} {tr.find_all('td')[PENALITY].get_text()}",end="")
+                    if row > 2:
+                        print(f"{tr.find_all('td')[DRIVER].find('a').get('href')}")
+                    elif row == 2:
+                        print(f" URL")
+                    else:
+                        print()
+
+                except Exception as e:
+                    print(f"Failed to retrieve {tr[POS]} {e.__repr__()}")
+                    exit(e.__str__())
+                # for data_cell in tr.find_all("td"):
+                #     if cnt == 0:
+                #         cnt = 1
+                #         continue
+                #         # print(child)
+                #     cnt += 1
+                #     print(data_cell.get_text(strip=True), end="\t")
+                #     # csv_file.write(data_cell.get_text(strip=True) + "\t")
+                # if cnt > 1:
+                #     pass
+                #     print()
+                #     # csv_file.write("\n")
+    else:
+        print(f"End of {url} results.")
+    return
 
 
-def get_track_names( url, year):
+def get_track_names(url, year):
     psoup = bs(url)
     rows = psoup.find_all("tr")
     races = []
@@ -102,7 +115,7 @@ def get_track_names( url, year):
         races.append(
             {"race_date": race_date.strftime("%m/%d/%Y"), "race_track": race_track, "race_results_url": race_results,
              "race_name": race_name,
-             "greg": {'driver': '', 'finish': 0}, "bob": {'driver': '', 'finish': 0}})
+             "greg"     : {'driver': '', 'finish': 0}, "bob": {'driver': '', 'finish': 0}})
     return races
 
 
@@ -119,7 +132,7 @@ def hydrate_race_json():
         url = f"{ESPN_RACING_RESULTS}{year}"
         try:
             if soup := bs(url):
-                track_names = get_track_name(soup,year= year)
+                track_names = get_track_name(soup, year=year)
 
                 for track in track_names:
                     print(track)
