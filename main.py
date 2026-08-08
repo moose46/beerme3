@@ -29,11 +29,11 @@ if __name__ == "__main__":
         track_names = beerme.get_track_names( url, year)
         db_hyd.hydrate_tracks(track_names)
         db_hyd.hydrate_races(track_names)
-        for track_name in track_names:
-            race_results = beerme.get_race_results(track_name["race_results_url"])
         # for track in track_names:
         #     print(track)
-        with open(f"json/{year}_races.json", "w") as file:
-            json.dump(track_names, file, indent=4)
+        # with open(f"json/{year}_races.json", "w") as file:
+        #     json.dump(track_names, file, indent=4)
     except Exception as e:
-        exit(e.__str__())
+        exit(f"main.py __main__ {e.__repr__()} ")
+    for track_name in track_names:
+        race_results = beerme.get_race_results(track_name["race_results_url"])

@@ -19,6 +19,16 @@ import requests
 from bs4 import BeautifulSoup
 
 ESPN_RACING_RESULTS = "https://www.espn.com/racing/results/_/year/"
+POS=0
+DRIVER=1
+CAR=2
+MANUFACTURER=3
+LAPS=4
+START=5
+LED=6
+PTS=7
+BONUS=8
+PENALITY=9
 
 
 #  python scrape_espn.py
@@ -39,20 +49,33 @@ def get_race_results(url):
         hot_soup = bs(url)
         cnt = 0
         if hot_soup:
+            row = 0
             # csv_file = open(output_file_name, "w")
             if table_rows := hot_soup.find_all("tr"):
                 for tr in table_rows:
-                    for data_cell in tr.find_all("td"):
-                        if cnt == 0:
-                            cnt = 1
-                            continue
-                            # print(child)
-                        cnt += 1
-                        # print(data_cell.get_text(strip=True), end="\t")
-                        # csv_file.write(data_cell.get_text(strip=True) + "\t")
-                    if cnt > 1:
-                        pass
-                        # csv_file.write("\n")
+                    row += 1
+                    if row  < 2:
+                        continue
+                    try:
+                        # tr.find_all('td')
+                        # tr.find_all('a')[0].get_text()
+                        # tr.find_all('td')[1].find('a').get('href')
+                        print(f"{tr.find_all('td')}")
+                    except Exception as e:
+                        print(f"Failed to retrieve {tr[POS]} {e.__repr__()}")
+                        exit(e.__str__())
+                    # for data_cell in tr.find_all("td"):
+                    #     if cnt == 0:
+                    #         cnt = 1
+                    #         continue
+                    #         # print(child)
+                    #     cnt += 1
+                    #     print(data_cell.get_text(strip=True), end="\t")
+                    #     # csv_file.write(data_cell.get_text(strip=True) + "\t")
+                    # if cnt > 1:
+                    #     pass
+                    #     print()
+                    #     # csv_file.write("\n")
         else:
             print(f"End of {url} results.")
         return
@@ -77,7 +100,7 @@ def get_track_names( url, year):
         race_track = re.sub(f"{race_name}", "", race_track)
         race_results = track_name[1].find_all("a")[0]["href"]
         races.append(
-            {"race_date": race_date.strftime("%m/%d/%Y"), "race_track": race_track, "race_results": race_results,
+            {"race_date": race_date.strftime("%m/%d/%Y"), "race_track": race_track, "race_results_url": race_results,
              "race_name": race_name,
              "greg": {'driver': '', 'finish': 0}, "bob": {'driver': '', 'finish': 0}})
     return races

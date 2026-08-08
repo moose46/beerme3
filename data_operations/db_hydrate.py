@@ -53,7 +53,7 @@ def hydrate_races(races):
             track_id = cursor.fetchone()
         except Error as e:
             print(e)
-        data_tuple = (race["race_date"],race["race_results"],race["race_name"], track_id[0])
+        data_tuple = (race["race_date"],race["race_results_url"],race["race_name"], track_id[0])
         try:
             cursor.execute(insert_query, data_tuple)
             conn.commit()
