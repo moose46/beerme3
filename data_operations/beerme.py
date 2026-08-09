@@ -12,6 +12,7 @@ import datetime as datetime
 import json
 import re
 import sys
+from .db_hydrate import hydrate_driver, hrydrate_race_result
 
 collections.Callable = collections.abc.Callable
 from settings import HEADERS
@@ -55,24 +56,27 @@ def get_race_results(url):
         if table_rows := hot_soup.find_all("tr"):
             for tr in table_rows:
                 row += 1
-                if row < 2:
+                if row < 3:
                     continue
                 try:
                     # tr.find_all('td')
                     # position =  tr.find_all('a')[POS].get_text()
                     # tr.find_all('td')[1].find('a').get('href')
-                    print(
-                        f"{tr.find_all('td')[POS].get_text()} {tr.find_all('td')[DRIVER].get_text()} "
-                        f"{tr.find_all('td')[CAR].get_text()} {tr.find_all('td')[MANUFACTURER].get_text()} "
-                        f"{tr.find_all('td')[LAPS].get_text()} {tr.find_all('td')[START].get_text()} "
-                        f"{tr.find_all('td')[LED].get_text()} {tr.find_all('td')[PTS].get_text()} "
-                        f"{tr.find_all('td')[BONUS].get_text()} {tr.find_all('td')[PENALITY].get_text()}",end="")
-                    if row > 2:
-                        print(f"{tr.find_all('td')[DRIVER].find('a').get('href')}")
-                    elif row == 2:
-                        print(f" URL")
-                    else:
-                        print()
+                    hydrate_driver(tr.find_all('td')[DRIVER].get_text(),
+                                   tr.find_all('td')[DRIVER].find('a').get('href'))
+
+                    # print(
+                    #     f"{tr.find_all('td')[POS].get_text()} {tr.find_all('td')[DRIVER].get_text()} "
+                    #     f"{tr.find_all('td')[CAR].get_text()} {tr.find_all('td')[MANUFACTURER].get_text()} "
+                    #     f"{tr.find_all('td')[LAPS].get_text()} {tr.find_all('td')[START].get_text()} "
+                    #     f"{tr.find_all('td')[LED].get_text()} {tr.find_all('td')[PTS].get_text()} "
+                    #     f"{tr.find_all('td')[BONUS].get_text()} {tr.find_all('td')[PENALITY].get_text()}", end="")
+                    # if row > 2:
+                    #     print(f"{tr.find_all('td')[DRIVER].find('a').get('href')}")
+                    # elif row == 2:
+                    #     print(f" URL")
+                    # else:
+                    #     print()
 
                 except Exception as e:
                     print(f"Failed to retrieve {tr[POS]} {e.__repr__()}")
@@ -115,7 +119,7 @@ def get_track_names(url, year):
         races.append(
             {"race_date": race_date.strftime("%m/%d/%Y"), "race_track": race_track, "race_results_url": race_results,
              "race_name": race_name,
-             "greg"     : {'driver': '', 'finish': 0}, "bob": {'driver': '', 'finish': 0}})
+             "greg": {'driver': '', 'finish': 0}, "bob": {'driver': '', 'finish': 0}})
     return races
 
 
