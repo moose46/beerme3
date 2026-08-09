@@ -1,7 +1,7 @@
 """
 python load_csv_db.py
-hydrates the nascar_results from data/mm-dd-yyyy.csv files
-bets[mm-dd-yyyy] must have the current race and bet data first
+hydrates the nascar_results from races/mm-dd-yyyy.csv files
+bets[mm-dd-yyyy] must have the current race and bet races first
 run scrape_espn.py before running this file
 
 """
@@ -19,7 +19,7 @@ from settings import PYCHARM_DATA, TARGET_BEERME_BET_DATA2026, \
     SOURCE_BEERME_BET_DATA2026, VISUAL_CODE_SOURCE_RESULTS, PYCHARM_JSON_DATA_FILE
 
 
-# C:\Users\me\PycharmProjects\BeerMe3\data\2026_bets.json
+# C:\Users\me\PycharmProjects\BeerMe3\races\2026_bets.json
 def read_bets_JSON_DATA_FILE():
     try:
         with open(f'{PYCHARM_JSON_DATA_FILE}', "r") as file:
@@ -193,7 +193,7 @@ def convert_json_file():
 
 if __name__ == "__main__":
     db = postgres_db.PostgreSQL()
-    # hydrate the CsvDB class with the bet data from bets
+    # hydrate the CsvDB class with the bet races from bets
     bets = read_bets_JSON_DATA_FILE()
     loader = CsvDB(bets=bets)
     for bet in bets:

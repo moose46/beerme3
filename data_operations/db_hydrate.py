@@ -1,7 +1,7 @@
-import logging
 import sqlite3
 from sqlite3 import Error
-import json
+
+from .track import Track
 
 DB_FILENAME = "bets.db"
 import logging
@@ -18,7 +18,7 @@ except Error as e:
     exit()
 
 
-# def hydrate_race_results(data):
+# def hydrate_race_results(races):
 #     hot_soup = bs(the_url)
 #     cnt = 0
 #     if hot_soup:
@@ -39,49 +39,36 @@ except Error as e:
 #         print(f"End of {year} results.")
 #     return race_dates
 
+
 def hrydrate_race_result(data):
     insert_query = """"""
     pass
 
 
-def hydrate_races(races):
-    insert_query = """
-                   INSERT INTO races (race_date, results_url, race_name, track_id)
-                   VALUES (?, ?, ?, ?)
-                   """
-    select_track_query = """
-                   SELECT track_id
-                   from tracks
-                   where track_name = ? \
-                   """
-    select_race_id_query = """select race_id
-                              from races
-                              where race_date = ?
-                                and results_url = ?
-                                and race_name = ?
-                                and track_id = ?"""
-    race_ids = []
-    for race in races:
-        track_name_tuple = (race["race_track"],)
+from .race import Race
 
-        try:
-            # look up track id
-            cursor.execute(select_track_query, track_name_tuple)
-            track_id = cursor.fetchone()
-        except Error as e:
-            print(e)
-        data_tuple = (race["race_date"], race["race_results_url"], race["race_name"], track_id[0])
-        try:
-            cursor.execute(insert_query, data_tuple)
-            conn.commit()
-            pass
-        except Error as e:
-            # print(f"{data_tuple} {e}")
-            logger.error(f"{data_tuple} {e}")
-        cursor.execute(select_race_id_query, data_tuple)
-        ret = cursor.fetchone()
-        race_ids.append(ret[0])
-    return race_ids
+
+def hydrate_races(races):
+    race_list = []
+    for race in races:
+        # race_instance = Race()
+        # race_instance.race_date = race.race_date
+        # race_instance.race_name = race.race_name
+        # race_instance.track_name = race.track_name
+        race.db_insert_race()
+        # race_list.append(race)
+    #     data_tuple = (race["race_date"], race["race_results_url"], race["race_name"], track_id[0])
+    #     try:
+    #         cursor.execute(insert_query, data_tuple)
+    #         conn.commit()
+    #         pass
+    #     except Error as e:
+    #         # print(f"{data_tuple} {e}")
+    #         logger.error(f"{data_tuple} {e}")
+    #     cursor.execute(select_race_id_query, data_tuple)
+    #     ret = cursor.fetchone()
+    #     race_ids.append(ret[0])
+    return races
 
 
 def hydrate_driver(driver_name, driver_url):
@@ -102,19 +89,26 @@ def hydrate_driver(driver_name, driver_url):
         logger.error(f"{driver_name} {driver_url} already exists!")
 
 
-def hydrate_tracks(data):
+def hydrate_tracks(races):
     insert_query = """
                    INSERT into tracks (track_name)
                    VALUES (?) \
                    """
-    for track in data:
-        data_tuple = (track["race_track"],)
+    fetch_query = """select * from tracks where track_name = ?"""
+    pass
+    for race in races:
+        data_tuple = (race.race_track_name,)
+        pass
         try:
             ret = cursor.execute(insert_query, data_tuple)
             conn.commit()
-            print(f"{track['race_track']} Created")
+            print(f"{race.track_name} Created")
         except Error as e:
             # print(f"{hydrate_tracks} {data_tuple} {e}")
             logger.error(f"{hydrate_tracks} {data_tuple} {e}")
-            # pass
+        cursor.execute(fetch_query, data_tuple)
+        track = cursor.fetchone()
+        # race.track_name = track["track_name"]
+        race.track.race_track_id = track[0]
+        pass
     # hydrate_races_db(conn, cursor, race,track_id[0])

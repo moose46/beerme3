@@ -12,7 +12,9 @@ import datetime as datetime
 import json
 import re
 import sys
-from .db_hydrate import hydrate_driver, hrydrate_race_result
+
+from data_operations.race import Race
+from .db_hydrate import hydrate_driver
 
 collections.Callable = collections.abc.Callable
 from settings import HEADERS
@@ -41,9 +43,9 @@ def bs(url):
         # print(response.status_code)
         return soup_is_ready
     elif response.status_code == 202:
-        exit(f"No data found for {url}, response_code = {response.status_code}")
+        exit(f"No races found for {url}, response_code = {response.status_code}")
     else:
-        print(f"Failed to retrieve data from {url}")
+        print(f"Failed to retrieve races from {url}")
         return None
 
 
@@ -98,7 +100,13 @@ def get_race_results(url):
     return
 
 
-def get_track_names(url, year):
+def get_race_data_espn(url, year):
+    """
+
+    :param url: 'https://www.espn.com/racing/results/_/year//2026'
+    :param year:
+    :return: a dict list of race_dates, race_track_name, race_results_url, with the bet races
+    """
     psoup = bs(url)
     rows = psoup.find_all("tr")
     races = []
@@ -114,12 +122,19 @@ def get_track_names(url, year):
         # get the race track name
         race_track = track_name[1].text
         # remove the race name, and only the track name is left
-        race_track = re.sub(f"{race_name}", "", race_track)
-        race_results = track_name[1].find_all("a")[0]["href"]
-        races.append(
-            {"race_date": race_date.strftime("%m/%d/%Y"), "race_track": race_track, "race_results_url": race_results,
-             "race_name": race_name,
-             "greg": {'driver': '', 'finish': 0}, "bob": {'driver': '', 'finish': 0}})
+        # race_track = re.sub(f"{race_name}", "", race_track)
+        # race_results = track_name[1].find_all("a")[0]["href"]
+        race = Race()
+        race.race_date=race_date.strftime("%m/%d/%Y")
+        race.race_track_name=re.sub(f"{race_name}", "", race_track)
+        race.results_url=track_name[1].find_all("a")[0]["href"]
+        race.race_name = race_name
+
+        # races.append(
+        #     {"race_date": race_date.strftime("%m/%d/%Y"), "race_track_name": race_track_name, "race_results_url": race_results,
+        #      "race_name": race_name,
+        #      "greg": {'driver': '', 'finish': 0}, "bob": {'driver': '', 'finish': 0}})
+        races.append(race)
     return races
 
 

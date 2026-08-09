@@ -25,10 +25,10 @@ if __name__ == "__main__":
     url = f"{ESPN_RACING_RESULTS}/{year}"
     logger.info(f"Getting tracks from {url}")
     try:
-        # create json/YYYY_races.json
-        track_names = beerme.get_track_names( url, year)
-        db_hyd.hydrate_tracks(track_names)
-        db_hyd.hydrate_races(track_names)
+        # create a list of races for the year
+        list_of_races = beerme.get_race_data_espn(url, year)
+        db_hyd.hydrate_tracks(list_of_races)
+        db_hyd.hydrate_races(list_of_races)
         # for track in track_names:
         #     print(track)
         # with open(f"json/{year}_races.json", "w") as file:
