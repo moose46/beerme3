@@ -1,14 +1,11 @@
 import sqlite3
 
+import data_operations.scrape_espn as espn
 from data_operations.bet import Bet
 from data_operations.track import Track
-import data_operations.scrape_espn as espn
+
 # from data_operations.db_hydrate import cursor
 
-insert_query = """
-               INSERT or REPLACE INTO races (race_date, results_url, race_name, track_id)
-               VALUES (?, ?, ?, ?)
-               """
 select_track_query = """
                      SELECT track_id
                      from tracks
@@ -20,6 +17,7 @@ select_race_id_query = """select race_id
                             and results_url = ?
                             and race_name = ?
                             and track_id = ?"""
+insert_driver_query = """insert or replace into drivers (driver_name, driver_url) VALUES (?, ?)"""
 
 
 class Race:
@@ -33,7 +31,9 @@ class Race:
         self._race_track_name = None
         self.track_name_tuple = (self._race_track_name,)
         self.greg = Bet()
+        self.greg.player_name = "Greg"
         self.bob = Bet()
+        self.bob.player_name = "Bob"
         self._track = Track()
         self._connection = None
         self.track.connection = self._connection
@@ -100,9 +100,24 @@ class Race:
 
     def db_insert_race(self):
         # look up track id, track must be already in the database
+        insert_query = """
+                       INSERT or REPLACE INTO races (race_date, results_url, race_name, track_id)
+                       VALUES (?, ?, ?, ?)
+                       """
+        select_race_query = """select race_id, track_id
+                               from races
+                               where race_date = ?
+                                 and results_url = ?
+                                 and race_name = ?
+                                 and track_id = ?"""
         data_tuple = (self._race_date, self._race_results_url, self._race_name, self.track.race_track_id)
         self._cursor.execute(insert_query, data_tuple)
         self._connection.commit()
+        self._cursor.execute(select_race_query, data_tuple)
+        results = self._cursor.fetchone()
+        self._race_id = results[0]
+        self._race_track_id = results[1]
+        pass
 
     def db_get_race(self, race_name: str, race_date: str, cursor: sqlite3.Cursor):
         query = """select *
@@ -112,8 +127,32 @@ class Race:
         cursor.execute(query, (self.race_name, self.race_date))
         race = self.cursor.fetchone()
         return race
+
+    def db_insert_driver(self, race_result: dict):
+        insert_query = """insert or replace into drivers (driver_name, driver_url) VALUES (?, ?)"""
+        select_driver_query = """select driver_id
+                                 from drivers
+                                 where driver_name = ?"""
+        self._cursor.execute(insert_query, (race_result["DRIVER"], race_result["DRIVER_URL"]))
+        self._connection.commit()
+        self._cursor.execute(select_driver_query, (race_result["DRIVER"],))
+        driver_id = self._cursor.fetchone()
+        race_result["DRIVER_ID"] = driver_id[0]
+
+        pass
+
     def db_insert_race_results(self):
-        espn.get_race_results(self._race_results_url)
+        insert_query = """insert or replace into results (pos, driver_name, start, race_id,manufacturer, driver_url, 
+        driver_id) 
+        VALUES (?, ?, ?, ?, ?, ?, ?)"""
+        race_results_dict = espn.get_race_results(self._race_results_url)
+        for race_result in race_results_dict:
+            # check to make sure the driver is in the database first
+            self.db_insert_driver(race_result)
+            data_tuple = (race_result["POS"], race_result["DRIVER"], race_result["START"], self._race_id,
+                          race_result["MANUFACTURER"], race_result["DRIVER_URL"], race_result["DRIVER_ID"],)
+            self._cursor.execute(insert_query, data_tuple)
+            self._connection.commit()
 
     def __repr__(self):
         return f"{self.race_date} {self.race_name} {self.track_id} {self.race_id}"

@@ -1,2 +1,1 @@
-from .soup import bs
-
+from bs4 import BeautifulSoup as bs

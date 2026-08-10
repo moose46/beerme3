@@ -34,9 +34,9 @@ def bs(url):
         # print(response.status_code)
         return soup_is_ready
     elif response.status_code == 202:
-        exit(f"No data found for {url}, response_code = {response.status_code}")
+        exit(f"No races found for {url}, response_code = {response.status_code}")
     else:
-        print(f"Failed to retrieve data from {url}")
+        print(f"Failed to retrieve races from {url}")
         return None
 
 
@@ -44,17 +44,17 @@ def get_track_name(psoup):
     rows = psoup.find_all("tbody")
     tracks = []
     for row in rows:
-        track_name = row.find_all("td", {"data-column": "track"})
-        race_dates = row.find_all("td", {"data-column": "date"})
-        race_television = row.find_all("td", {"data-column": "television"})
-        race_winner = row.find_all("td", {"data-column": "winner"})
-        win_make = row.find_all("td", {"data-column": "win_make"})
-        race_name = row.find_all("td", {"data-column": "race"})
+        track_name = row.find_all("td", {"races-column": "track"})
+        race_dates = row.find_all("td", {"races-column": "date"})
+        race_television = row.find_all("td", {"races-column": "television"})
+        race_winner = row.find_all("td", {"races-column": "winner"})
+        win_make = row.find_all("td", {"races-column": "win_make"})
+        race_name = row.find_all("td", {"races-column": "race"})
 
         for index in range(len(race_dates)):
             a_track_dict = dict(track=track_name[index].get_text(strip=True), date=race_dates[index].get(
-                "data-sort")[5:7] + "-" + race_dates[index].get("data-sort")[8:10] + "-" + race_dates[index].get(
-                "data-sort")[0:4], time=race_dates[index].get("data-sort")[11:19],
+                "races-sort")[5:7] + "-" + race_dates[index].get("races-sort")[8:10] + "-" + race_dates[index].get(
+                "races-sort")[0:4], time=race_dates[index].get("races-sort")[11:19],
                                 television=race_television[index].get_text(), win_make=win_make[index].get_text(),
                                 race_winner=race_winner[index].get_text(), race_name=race_name[index].get_text())
             a_track_dict["track"] = remove_ellipsis(a_track_dict["track"])
@@ -148,7 +148,7 @@ if __name__ == "__main__":
             if soup := bs(url):
                 race_dates = process_year_to_date_results(soup)
             else:
-                print(f"No data found for year {year}")
+                print(f"No races found for year {year}")
         except Exception as e:
             exit(e.__str__())
     # copy race dates to visual studio beerme2

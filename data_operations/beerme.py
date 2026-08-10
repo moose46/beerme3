@@ -125,13 +125,14 @@ def get_race_data_espn(url, year):
         # race_track = re.sub(f"{race_name}", "", race_track)
         # race_results = track_name[1].find_all("a")[0]["href"]
         race = Race()
-        race.race_date=race_date.strftime("%m/%d/%Y")
-        race.race_track_name=re.sub(f"{race_name}", "", race_track)
-        race.results_url=track_name[1].find_all("a")[0]["href"]
+        race.race_date = race_date.strftime("%m/%d/%Y")
+        race.race_track_name = re.sub(f"{race_name}", "", race_track)
+        race.results_url = track_name[1].find_all("a")[0]["href"]
         race.race_name = race_name
 
         # races.append(
-        #     {"race_date": race_date.strftime("%m/%d/%Y"), "race_track_name": race_track_name, "race_results_url": race_results,
+        #     {"race_date": race_date.strftime("%m/%d/%Y"), "race_track_name": race_track_name, "race_results_url":
+        #     race_results,
         #      "race_name": race_name,
         #      "greg": {'driver': '', 'finish': 0}, "bob": {'driver': '', 'finish': 0}})
         races.append(race)

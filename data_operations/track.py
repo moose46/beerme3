@@ -1,6 +1,4 @@
 insert_query = f"""INSERT INTO tracks (track_name) VALUES (?)"""
-from _sqlite3 import Error
-import sqlite3
 import logging
 
 logger = logging.getLogger(__name__)
@@ -52,6 +50,7 @@ class Track(object):
     @property
     def connection(self):
         return self._connection
+
     @connection.setter
     def connection(self, value):
         self._connection = value

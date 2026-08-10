@@ -10,10 +10,10 @@ from settings import TARGET_RESULTS, HEADERS, TRACK_HOST
 import betData2026
 
 DATE_FORMAT = "%m-%d-%Y"
-file_path = Path.home() / "beerme" / "data"
+file_path = Path.home() / "beerme" / "races"
 log_file = Path.cwd() / "files_log.txt"
 if not file_path.exists():
-    file_path = Path.cwd() / "data"
+    file_path = Path.cwd() / "races"
     log_file = Path.cwd() / "files_log.txt"
     if not file_path.exists():
         print(f"{file_path} Does Not Exist!")
@@ -29,7 +29,7 @@ DriverBet = namedtuple("DriverBet", "date, person_name, driver_name, badge_color
 
 
 class ProcessDataFiles:
-    """_summary_Reads data/results* txt files for the results of all races in the data directory
+    """_summary_Reads races/results* txt files for the results of all races in the races directory
     creates a list of individual race results, but no correlation between two races,except race date
     """
 
@@ -39,7 +39,7 @@ class ProcessDataFiles:
         # a list of all race results
         self.race_schedule_results = []
         # print(self.individual_bets)
-        # creates a class that reads the races results data files
+        # creates a class that reads the races results races files
         self.data = betData2026.BetData2026()
         self.individual_bets = betData2026.BetData2026()
         print(f"{self.individual_bets}")
@@ -51,9 +51,9 @@ class ProcessDataFiles:
 
     def read_data_files(self):  # sourcery skip: low-code-quality
         # print("In read_data_files")
-        # find all the results for all the races in the data directory that match the 02-02-2023.csv pattern
+        # find all the results for all the races in the races directory that match the 02-02-2023.csv pattern
         for bet in self.data.individual_bets:  # bet: '02-15-2026'
-            race_track = self.individual_bets[bet]["Track"]  # race_track 'Daytona'
+            race_track = self.individual_bets[bet]["Track"]  # race_track_name 'Daytona'
             race_date = bet  # race_date: '02-15-2026
             # Changed name to .csv files
             results_file_name = f"*{bet}*.csv"  # results_file_name: '*02-15-2026*.csv'
@@ -61,7 +61,7 @@ class ProcessDataFiles:
             print(f"1. Processing {race_track}  - {results_file_name}")
             found = False
             for _ in file_path.glob(
-                    results_file_name):  # WindowsPath('C:/Users/me/PycharmProjects/beerme3/data/02-15-2026.csv')
+                    results_file_name):  # WindowsPath('C:/Users/me/PycharmProjects/beerme3/races/02-15-2026.csv')
                 found = True
             if not found:
                 print(f"Checking -> {results_file_name}")
@@ -80,13 +80,13 @@ class ProcessDataFiles:
                     except Exception as e:
                         print(f"nametuple -> {e}")
                         exit()
-                    # Result = namedtuple('Result', [*rawResult._fields, 'picked_by', 'race_date', 'race_track'])
+                    # Result = namedtuple('Result', [*rawResult._fields, 'picked_by', 'race_date', 'race_track_name'])
                     # print(f"open ok {f.name}")
                     for row in reader:  # row: ['1', 'Tyler Reddick', '45', 'Toyota', '200', '26', '1', '58', '3', '0', '']
                         # try:
                         result = rawResult(
                             *row
-                        )  # unpack csv data row into the named tuple
+                        )  # unpack csv races row into the named tuple
                         # except Exception as e:
                         #     print(f.name)
                         # logging.info(f"raw result: {result}")
@@ -99,7 +99,7 @@ class ProcessDataFiles:
                             # loop through the bets and check for a driver in the results, if found add to the results list
                             for name in self.individual_bets[
                                 race_date
-                            ]:  # get the bet data for the this race data
+                            ]:  # get the bet races for the this race races
                                 # the key [race_date][name] returns the driver name
                                 # print(f"name in individual_bets: {race_date} {name}")
                                 if (
@@ -113,7 +113,7 @@ class ProcessDataFiles:
                                     capitalized_parts = [ # capatalized_parts: ['Daytona']
                                         p.capitalize() for p in parts
                                     ]  # cap first letter(s) of name
-                                    # add results of the race and the bet data for this player to the list of results
+                                    # add results of the race and the bet races for this player to the list of results
                                     driver_last_name = result.DRIVER.split(" ")
                                     # martin truex jr., del jr.
                                     if (
@@ -125,7 +125,7 @@ class ProcessDataFiles:
                                     self.race_schedule_results.append(
                                         {
                                             "race_date": race_date,
-                                            "race_track": " ".join(
+                                            "race_track_name": " ".join(
                                                 [
                                                     word.capitalize()
                                                     for word in race_track.split(" ")

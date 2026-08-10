@@ -4,7 +4,7 @@ import json
 """
 run beerme.py first to create YYYY_races.json file
 reads json\YYYY_races.json files for input
-populates data/bets.db
+populates races/bets.db
 """
 
 def hydrate_races_db(conn, cursor, race, track_id):
@@ -24,7 +24,7 @@ def hydrate_tracks_db(conn, cursor, data):
                    INSERT into tracks (track_name)
                    VALUES (?) \
                    """
-    data_tuple = (data["race_track"],)
+    data_tuple = (data["race_track_name"],)
     try:
         ret = cursor.execute(insert_query, data_tuple)
         conn.commit()
@@ -34,7 +34,7 @@ def hydrate_tracks_db(conn, cursor, data):
     select_query = """
     SELECT track_id from tracks where track_name = ?
     """
-    track_name_tuple = (data["race_track"],)
+    track_name_tuple = (data["race_track_name"],)
 
     try:
         cursor.execute(select_query, track_name_tuple)
@@ -112,7 +112,7 @@ if __name__ == "__main__":
     with open('./json/2026_races.json') as f:
         data = json.load(f)
         for race in data:
-            print(race["race_track"])
+            print(race["race_track_name"])
             hydrate_tracks_db(conn, cursor, race)
             hydrate_race_results(conn, cursor, race)
     cursor.close()

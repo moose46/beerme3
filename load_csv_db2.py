@@ -1,7 +1,7 @@
 """
 python load_csv_db.py
-hydrates the nascar_results from data/mm-dd-yyyy.csv files
-bets[mm-dd-yyyy] must have the current race and bet data first
+hydrates the nascar_results from races/mm-dd-yyyy.csv files
+bets[mm-dd-yyyy] must have the current race and bet races first
 run scrape_espn.py before running this file
 
 """
@@ -145,7 +145,7 @@ class CsvDB:
 
 if __name__ == "__main__":
     db = postgres_db.PostgreSQL()
-    # load track data from yyyy-races.json
+    # load track races from yyyy-races.json
     db = CsvDB()
     with open('data\\2026_races.json', "r") as file:
         races = json.load(file)
@@ -158,7 +158,7 @@ if __name__ == "__main__":
                 continue
 
             db.hydrate_race_results_from_json(row, track_id=track_id)
-    # hydrate the CsvDB class with the bet data from betData2026
+    # hydrate the CsvDB class with the bet races from betData2026
     # loader = CsvDB(bets_2026=bets.get_bets)
     # for bet in loader.get_bets:
     #     hydrated = loader.hydrate_track_table(loader.bets[bet]["Track"])
