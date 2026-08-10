@@ -27,12 +27,15 @@ def bs(url):
         print(f"Failed to retrieve data from {url}")
         return None
 
+
 def get_track_name(psoup):
     rows = psoup.find_all("tr")
 
     for row in rows:
-        table_row = row.find_all("tr",attrs={"class": "evenrow"})
+        table_row = row.find_all("tr", attrs={"class": "evenrow"})
     return
+
+
 def process_year_to_date_results(psoup):
     """
      Create mm-dd-yyyy.csv race results file
@@ -147,7 +150,7 @@ if __name__ == "__main__":
         url = f"{ESPN_RACING_RESULTS}{year}"
         try:
             if soup := bs(url):
-                track_names = get_track_name(soup,year= year)
+                track_names = get_track_name(soup, year=year)
 
                 for track in track_names:
                     print(track)

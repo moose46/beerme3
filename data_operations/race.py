@@ -2,11 +2,11 @@ import sqlite3
 
 from data_operations.bet import Bet
 from data_operations.track import Track
-
+import data_operations.scrape_espn as espn
 # from data_operations.db_hydrate import cursor
 
 insert_query = """
-               INSERT INTO races (race_date, results_url, race_name, track_id)
+               INSERT or REPLACE INTO races (race_date, results_url, race_name, track_id)
                VALUES (?, ?, ?, ?)
                """
 select_track_query = """
@@ -30,13 +30,24 @@ class Race:
         # self._race_track_name = None
         # self._track_id = None
         self._race_id = None
-        self._cursor = None
         self._race_track_name = None
         self.track_name_tuple = (self._race_track_name,)
         self.greg = Bet()
         self.bob = Bet()
         self._track = Track()
+        self._connection = None
+        self.track.connection = self._connection
+        self._cursor = None
         self.track.cursor = self._cursor
+
+    @property
+    def connection(self):
+        return self._connection
+
+    @connection.setter
+    def connection(self, connection: sqlite3.Connection):
+        self._connection = connection
+        self.track.connection = self._connection
 
     @property
     def track(self):
@@ -46,14 +57,6 @@ class Race:
     def track(self, track: Track):
         self._track = track
 
-    # @property
-    # def race_track_id(self):
-    #     return self.track.track_id
-    #
-    # @race_track_id.setter
-    # def race_track_id(self, race_track_id: int):
-    #     self.track.track_id = race_track_id
-
     @property
     def cursor(self):
         return self._cursor
@@ -61,6 +64,7 @@ class Race:
     @cursor.setter
     def cursor(self, cursor: sqlite3.Cursor):
         self._cursor = cursor
+        self.track.cursor = cursor
 
     @property
     def race_track_name(self):
@@ -95,16 +99,10 @@ class Race:
         self._race_date = race_date
 
     def db_insert_race(self):
-        # try:
-        #     # look up track id, track must be already in the database
-        #     self._cursor.execute(select_track_query, self.track_name_tuple)
-        #     selftrack_id = self._cursor.fetchone()
-        # except Error as e:
-        #     print(f"Error: {self.race_track_name} must be already in the database {e}")
-        #     return e
-        # track is in the database
-        data_tuple = (self._race_date, self._race_results_url, self._race_name, self._race_track_id)
-        pass
+        # look up track id, track must be already in the database
+        data_tuple = (self._race_date, self._race_results_url, self._race_name, self.track.race_track_id)
+        self._cursor.execute(insert_query, data_tuple)
+        self._connection.commit()
 
     def db_get_race(self, race_name: str, race_date: str, cursor: sqlite3.Cursor):
         query = """select *
@@ -114,6 +112,8 @@ class Race:
         cursor.execute(query, (self.race_name, self.race_date))
         race = self.cursor.fetchone()
         return race
+    def db_insert_race_results(self):
+        espn.get_race_results(self._race_results_url)
 
     def __repr__(self):
         return f"{self.race_date} {self.race_name} {self.track_id} {self.race_id}"

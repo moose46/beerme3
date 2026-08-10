@@ -16,12 +16,24 @@ import re
 collections.Callable = collections.abc.Callable
 from settings import SOURCE_BEERME_BET_DATA2026, HEADERS
 import requests
-from bs4 import BeautifulSoup as bs
+from bs4 import BeautifulSoup
 
 ESPN_RACING_RESULTS = "https://www.espn.com/racing/results/_/year/"
 
 
 #  python scrape_espn.py
+def bs(url):
+    response = requests.get(url, headers=HEADERS)
+    if response.status_code in [200]:
+        soup_is_ready = BeautifulSoup(response.text,
+                                      "html.parser")
+        # print(response.status_code)
+        return soup_is_ready
+    elif response.status_code == 202:
+        exit(f"No data found for {url}, response_code = {response.status_code}")
+    else:
+        print(f"Failed to retrieve data from {url}")
+        return None
 
 
 def get_track_names(psoup, year):
@@ -52,6 +64,31 @@ def get_track_names(psoup, year):
              "race_name": race_name,
              "greg": {'driver': '', 'finish': 0}, "bob": {'driver': '', 'finish': 0}})
     return races
+
+def get_race_results(url: str):
+    hot_soup = bs(url)
+    cnt = 0
+    if hot_soup:
+        # csv_file = open(output_file_name, "w")
+        if table_rows := hot_soup.find_all("tr"):
+            for tr in table_rows:
+                for data_cell in tr.find_all("td"):
+                    if cnt == 0:
+                        cnt = 1
+                        continue
+                        # print(child)
+                    cnt += 1
+                    print(data_cell.get_text(strip=True), end="\t")
+                    # csv_file.write(data_cell.get_text(strip=True) + "\t")
+                if cnt > 1:
+                    print()
+                    pass
+                    # csv_file.write("\n")
+
+            print()
+    else:
+        print(f"End of {url} results.")
+    return None
 
 
 
