@@ -91,12 +91,12 @@ def get_race_results(url: str):
                         # hydrate dictionary names
                         dict_names.append(data_cell.get_text(strip=True))
                         continue
-                    print(data_cell.get_text(strip=True), end="\t")
+                    # print(data_cell.get_text(strip=True), end="\t")
                     driver_results[dict_names[header_row_position]] = data_cell.get_text(strip=True)
                     header_row_position += 1
                     # csv_file.write(data_cell.get_text(strip=True) + "\t")
                 if cnt > 1:
-                    print()
+                    # print()
                     pass
                     # csv_file.write("\n")
                 if driver_results != {}:
@@ -108,7 +108,7 @@ def get_race_results(url: str):
     else:
         print(f"End of {url} results.")
         # x = all_results.remove(0)
-    return all_results
+    return all_results, dict_names
 
 
 if __name__ == "__main__":

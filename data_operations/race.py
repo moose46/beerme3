@@ -4,6 +4,7 @@ import data_operations.scrape_espn as espn
 from data_operations.bet import Bet
 from data_operations.track import Track
 
+TARGET_RESULTS = f"./data"
 # from data_operations.db_hydrate import cursor
 
 select_track_query = """
@@ -30,15 +31,17 @@ class Race:
         self._race_id = None
         self._race_track_name = None
         self.track_name_tuple = (self._race_track_name,)
-        self.greg = Bet()
-        self.greg.player_name = "Greg"
-        self.bob = Bet()
-        self.bob.player_name = "Bob"
+        self.greg = Bet(player_name='Greg')
+
+        self.bob = Bet(player_name='Bob')
+
         self._track = Track()
+        self.race_results_dict = None
         self._connection = None
         self.track.connection = self._connection
         self._cursor = None
         self.track.cursor = self._cursor
+        self.csv_headers = None
 
     @property
     def connection(self):
@@ -98,6 +101,28 @@ class Race:
     def race_date(self, race_date: str):
         self._race_date = race_date
 
+    def csv_create_file(self):
+        year = self._race_date[6:10]
+        month = self._race_date[:2]
+        day = self._race_date[3:5]
+        output_file_name = f"{TARGET_RESULTS}/{month}-{day}-{year}.csv"
+        csv_data = []
+        csv_file = open(output_file_name, "w")
+        # write the header names
+        csv_file.write(",".join(self.csv_headers))
+
+        # for result in self.race_results_dict:
+        #     print(result)
+        csv_file.write("\n")
+        for race in self.race_results_dict:
+            data_list = []
+            for header_name in self.csv_headers:
+                data_list.append(race[header_name])
+            csv_file.write(",".join(data_list))
+            csv_file.write("\n")
+        csv_file.close()
+        pass
+
     def db_insert_race(self):
         # look up track id, track must be already in the database
         insert_query = """
@@ -145,8 +170,9 @@ class Race:
         insert_query = """insert or replace into results (pos, driver_name, start, race_id,manufacturer, driver_url, 
         driver_id) 
         VALUES (?, ?, ?, ?, ?, ?, ?)"""
-        race_results_dict = espn.get_race_results(self._race_results_url)
-        for race_result in race_results_dict:
+        # get the race results from esp website
+        self.race_results_dict, self.csv_headers = espn.get_race_results(self._race_results_url)
+        for race_result in self.race_results_dict:
             # check to make sure the driver is in the database first
             self.db_insert_driver(race_result)
             data_tuple = (race_result["POS"], race_result["DRIVER"], race_result["START"], self._race_id,
@@ -158,4 +184,4 @@ class Race:
         return f"{self.race_date} {self.race_name} {self.track_id} {self.race_id}"
 
     def __str__(self):
-        return f""""""
+        return f"{self.race_date} {self.race_name} {self._race_track_id} {self.r}"

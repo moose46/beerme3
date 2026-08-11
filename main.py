@@ -44,4 +44,6 @@ if __name__ == "__main__":
         # race.track.db_get_race_track_id()
         race.track.db_insert_track()
         race.db_insert_race()
-        race_results_dict = race.db_insert_race_results()
+        race.db_insert_race_results()
+        race.csv_create_file()
+        print(race)
