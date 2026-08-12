@@ -19,6 +19,11 @@ select_race_id_query = """select race_id
                             and race_name = ?
                             and track_id = ?"""
 insert_driver_query = """insert or replace into drivers (driver_name, driver_url) VALUES (?, ?)"""
+import logging
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(filename='race.log', level=logging.INFO, filemode='w')
+logger.info('Started')
 
 
 class Race:
@@ -115,29 +120,37 @@ class Race:
         #     print(result)
         csv_file.write("\n")
         for race in self.race_results_dict:
-            data_list = []
-            for header_name in self.csv_headers:
-                data_list.append(race[header_name])
-            csv_file.write(",".join(data_list))
-            csv_file.write("\n")
+            try:
+                data_list = []
+                for header_name in self.csv_headers:
+                    data_list.append(race[header_name])
+                csv_file.write(",".join(data_list))
+                csv_file.write("\n")
+            except Exception as e:
+                # FIXME https://www.espn.com/racing/raceresults/_/series/sprint/raceId/202102140001
+                return
         csv_file.close()
         pass
 
     def db_insert_race(self):
         # look up track id, track must be already in the database
         insert_query = """
-                       INSERT or REPLACE INTO races (race_date, results_url, race_name, track_id)
+                       INSERT INTO races (race_date, results_url, race_name, track_id)
                        VALUES (?, ?, ?, ?)
                        """
+
         select_race_query = """select race_id, track_id
                                from races
                                where race_date = ?
-                                 and results_url = ?
-                                 and race_name = ?
-                                 and track_id = ?"""
+                                 and track_id = ? \
+                            """
         data_tuple = (self._race_date, self._race_results_url, self._race_name, self.track.race_track_id)
-        self._cursor.execute(insert_query, data_tuple)
-        self._connection.commit()
+        try:
+            self._cursor.execute(insert_query, data_tuple)
+            self._connection.commit()
+        except Exception as e:
+            pass
+        data_tuple = (self._race_date, self.track.race_track_id,)
         self._cursor.execute(select_race_query, data_tuple)
         results = self._cursor.fetchone()
         self._race_id = results[0]
@@ -154,34 +167,47 @@ class Race:
         return race
 
     def db_insert_driver(self, race_result: dict):
-        insert_query = """insert or replace into drivers (driver_name, driver_url) VALUES (?, ?)"""
+        insert_query = """insert into drivers (driver_name, driver_url)
+                          VALUES (?, ?)"""
         select_driver_query = """select driver_id
                                  from drivers
                                  where driver_name = ?"""
-        self._cursor.execute(insert_query, (race_result["DRIVER"], race_result["DRIVER_URL"]))
-        self._connection.commit()
+        try:
+            race_result["DRIVER_URL"] = r"https://www.espn.com" + race_result["DRIVER_URL"]
+            self._cursor.execute(insert_query, (race_result["DRIVER"], race_result["DRIVER_URL"]))
+            self._connection.commit()
+        except Exception as e:
+            # FIXME empty driver name
+            # exit(f"{e.__str__()} DRIVER_URL={race_result['DRIVER_URL']} DRIVER={race_result['DRIVER']}")
+            pass
         self._cursor.execute(select_driver_query, (race_result["DRIVER"],))
         driver_id = self._cursor.fetchone()
         race_result["DRIVER_ID"] = driver_id[0]
+        # logging.INFO(f"Created {race_result["DRIVER"]}")
 
         pass
 
     def db_insert_race_results(self):
-        insert_query = """insert or replace into results (pos, driver_name, start, race_id,manufacturer, driver_url, 
-        driver_id) 
-        VALUES (?, ?, ?, ?, ?, ?, ?)"""
+        insert_query = """insert into results (pos, driver_name, start, race_id, manufacturer, driver_url,
+                                               driver_id)
+                          VALUES (?, ?, ?, ?, ?, ?, ?)"""
         # get the race results from esp website
         self.race_results_dict, self.csv_headers = espn.get_race_results(self._race_results_url)
+
         for race_result in self.race_results_dict:
             # check to make sure the driver is in the database first
-            self.db_insert_driver(race_result)
-            data_tuple = (race_result["POS"], race_result["DRIVER"], race_result["START"], self._race_id,
-                          race_result["MANUFACTURER"], race_result["DRIVER_URL"], race_result["DRIVER_ID"],)
-            self._cursor.execute(insert_query, data_tuple)
-            self._connection.commit()
+            try:
+                self.db_insert_driver(race_result)
+                data_tuple = (race_result["POS"], race_result["DRIVER"], race_result["START"], self._race_id,
+                              race_result["MANUFACTURER"], race_result["DRIVER_URL"], race_result["DRIVER_ID"],)
+                self._cursor.execute(insert_query, data_tuple)
+                self._connection.commit()
+            except Exception as e:
+                # FixME No Data Available https://www.espn.com/racing/raceresults/_/series/sprint/raceId/202102140001
+                return
 
     def __repr__(self):
         return f"{self.race_date} {self.race_name} {self.track_id} {self.race_id}"
 
     def __str__(self):
-        return f"{self.race_date} {self.race_name} {self._race_track_id} {self.r}"
+        return f"{self._race_date} {self._race_name}"

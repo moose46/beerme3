@@ -12,7 +12,7 @@ from db_hydrate_tracks import cursor
 DB_FILENAME = "bets.db"
 import logging
 
-ESPN_RACING_RESULTS = "https://www.espn.com/racing/results/_/year/"
+ESPN_RACING_RESULTS = "https://www.espn.com/racing/results/_/year"
 collections.Callable = collections.abc.Callable
 import data_operations.beerme as beerme
 
@@ -25,7 +25,7 @@ except Error as e:
 
 if __name__ == "__main__":
     logger = logging.getLogger(__name__)
-    logging.basicConfig(filename='beerme.log', level=logging.INFO, filemode='w')
+    logging.basicConfig(filename='main.log', level=logging.INFO, filemode='w')
     logger.info('Started')
     year = datetime.now().year
     try:

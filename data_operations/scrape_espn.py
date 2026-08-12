@@ -11,6 +11,8 @@ import collections
 import datetime as datetime
 import re
 
+import settings
+
 # from bs4 import BeautifulSoup as bs
 collections.Callable = collections.abc.Callable
 from settings import HEADERS
@@ -100,11 +102,14 @@ def get_race_results(url: str):
                     pass
                     # csv_file.write("\n")
                 if driver_results != {}:
-                    driver_results["DRIVER_URL"] = tr.find_all('a')[0]['href']
+                    try:
+                        driver_results["DRIVER_URL"] = tr.find_all('a')[0]['href']
+                    except Exception as e:
+                        driver_results["DRIVER_URL"] = ""
                     all_results.append(driver_results)
                 row_cnt += 1
                 driver_results = {}
-            print()
+            # print()
     else:
         print(f"End of {url} results.")
         # x = all_results.remove(0)
