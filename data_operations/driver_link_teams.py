@@ -1,5 +1,7 @@
 import collections
+import logging
 import sqlite3
+from datetime import datetime
 from sqlite3 import Error
 
 import requests
@@ -21,6 +23,9 @@ try:
 except Error as e:
     print(f"Error: {DB_FILENAME} {e}")
     exit()
+logger = logging.getLogger(__name__)
+logging.basicConfig(filename='driver-link-teams.log', level=logging.INFO, filemode='w')
+logger.info(f'Started {datetime.now()}')
 
 
 def bs(url):
@@ -64,7 +69,7 @@ def get_drivers(soup):
         driver_dict["driver-age"] = driver_age
         driver_dict["crew-chief"] = driver_crew_chief
         driver_dict["driver-team"] = driver_team
-        driver_dict["driver-nascar-url"] = driver_nascar_url
+        driver_dict["nascar-driver-url"] = driver_nascar_url
         driver_dict["driver-home-town"] = driver_home_town
         drivers.append(driver_dict)
         driver_dict = {}
@@ -75,22 +80,39 @@ def get_drivers(soup):
 
 
 def insert_teams_into_db(drivers):
+    # create index idx_driver_name_lower on drivers(lower(driver_name));
+    # update drivers espn url
     update_query = """update drivers
                       set crew_chief=?,
                           team=?,
-                          nascar_driver_url=?,
+                          espn_driver_url=?,
                           age=?,
-                          home_town=?, sponsor=?
+                          home_town=?,
+                          sponsor=?
 
-                      where driver_name = ?"""
-
+                      where lower(nascar_driver_url) = lower(?) COLLATE NOCASE"""
+    select_query = """select count(*)
+                      from drivers
+                      where nascar_driver_url = ? COLLATE NOCASE"""
     for driver in drivers:
         try:
-            driver_tuple = (driver["crew-chief"], driver["driver-team"], driver["driver-nascar-url"], driver["driver-age"], driver["driver-home-town"],
-                            driver["sponsor"],driver["driver-name"],)
+            driver_name = (driver["nascar-driver-url"],)
+            try:
+                driver_tuple = (driver["crew-chief"], driver["driver-team"], driver["espn_driver_url"],
+                                driver["driver-age"], driver["driver-home-town"],
+                                driver["sponsor"], driver["nascar-driver-url"],)
+            except Exception as e:
+                logger.info(f"Error Driver Tuple {driver_tuple}")
+                continue
+            cursor.execute(select_query, driver_name)
+            cnt = cursor.fetchone()
+            if cnt[0] == 0:
+                logger.info(f"Driver not Found {driver_tuple}")
+                continue
             cursor.execute(update_query, driver_tuple)
             conn.commit()
-        except Error as e:
+        except Exception as e:
+            logger.info(f"Error: {e} {driver_tuple}")
             pass
 
 
@@ -98,6 +120,8 @@ if __name__ == "__main__":
     driver = webdriver.Chrome()
     # driver.get("https://www.nascar.com/news-media/2026/08/10/2026-nascar-cup-series-entry-list-for-richmond-raceway/")
     driver.get("https://www.nascar.com/news-media/2026/08/03/2026-nascar-cup-series-entry-list-for-iowa-speedway/")
+    # driver.get("https://www.nascar.com/news-media/2026/03/22/2026-nascar-cup-series-entry-list-for-darlington
+    # -raceway/")
     soup = BeautifulSoup(driver.page_source, "html.parser")
     race_drivers = get_drivers(soup)
     insert_teams_into_db(race_drivers)

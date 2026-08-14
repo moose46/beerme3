@@ -72,7 +72,7 @@ def hydrate_races(races):
 
 
 def hydrate_driver(driver_name, driver_url):
-    insert_query = """insert into drivers (driver_name, driver_url)
+    insert_query = """insert into drivers (driver_name, drivers_url)
                       VALUES (?, ?)"""
     select_query = """select driver_id
                       from drivers
