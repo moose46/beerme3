@@ -69,7 +69,7 @@ def get_drivers(soup):
         driver_dict["driver-age"] = driver_age
         driver_dict["crew-chief"] = driver_crew_chief
         driver_dict["driver-team"] = driver_team
-        driver_dict["nascar-driver-url"] = driver_nascar_url
+        driver_dict["espn-driver-url"] = driver_nascar_url
         driver_dict["driver-home-town"] = driver_home_town
         drivers.append(driver_dict)
         driver_dict = {}
@@ -81,11 +81,11 @@ def get_drivers(soup):
 
 def insert_teams_into_db(drivers):
     # create index idx_driver_name_lower on drivers(lower(driver_name));
-    # update drivers espn url
+    # update drivers nascar url
     update_query = """update drivers
                       set crew_chief=?,
                           team=?,
-                          espn_driver_url=?,
+                          nascar_driver_url=?,
                           age=?,
                           home_town=?,
                           sponsor=?
@@ -96,11 +96,11 @@ def insert_teams_into_db(drivers):
                       where nascar_driver_url = ? COLLATE NOCASE"""
     for driver in drivers:
         try:
-            driver_name = (driver["nascar-driver-url"],)
+            driver_name = (driver["espn-driver-url"],)
             try:
-                driver_tuple = (driver["crew-chief"], driver["driver-team"], driver["espn_driver_url"],
+                driver_tuple = (driver["crew-chief"], driver["driver-team"], driver["espn-driver-url"],
                                 driver["driver-age"], driver["driver-home-town"],
-                                driver["sponsor"], driver["nascar-driver-url"],)
+                                driver["sponsor"], driver["espn-driver-url"],)
             except Exception as e:
                 logger.info(f"Error Driver Tuple {driver_tuple}")
                 continue
@@ -119,8 +119,8 @@ def insert_teams_into_db(drivers):
 if __name__ == "__main__":
     driver = webdriver.Chrome()
     # driver.get("https://www.nascar.com/news-media/2026/08/10/2026-nascar-cup-series-entry-list-for-richmond-raceway/")
-    driver.get("https://www.nascar.com/news-media/2026/08/03/2026-nascar-cup-series-entry-list-for-iowa-speedway/")
-    # driver.get("https://www.nascar.com/news-media/2026/03/22/2026-nascar-cup-series-entry-list-for-darlington
+    # driver.get("https://www.nascar.com/news-media/2026/08/03/2026-nascar-cup-series-entry-list-for-iowa-speedway/")
+    driver.get("https://www.nascar.com/news-media/2026/03/22/2026-nascar-cup-series-entry-list-for-darlington-raceway/")
     # -raceway/")
     soup = BeautifulSoup(driver.page_source, "html.parser")
     race_drivers = get_drivers(soup)
