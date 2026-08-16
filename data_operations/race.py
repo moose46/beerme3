@@ -125,7 +125,7 @@ class Race:
         csv_data = []
         csv_file = open(output_file_name, "w")
         # write the header names
-        csv_file.write(",".join(self.csv_headers))
+        csv_file.write("\t".join(self.csv_headers))
 
         # for result in self.race_results_dict:
         #     print(result)
@@ -135,7 +135,7 @@ class Race:
                 data_list = []
                 for header_name in self.csv_headers:
                     data_list.append(race[header_name])
-                csv_file.write(",".join(data_list))
+                csv_file.write("\t".join(data_list))
                 csv_file.write("\n")
             except Exception as e:
                 # FIXME https://www.espn.com/racing/raceresults/_/series/sprint/raceId/202102140001
