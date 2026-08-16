@@ -1,9 +1,11 @@
 import sqlite3
 
 import data_operations.scrape_espn as espn
+from data_operations import beerme
 from data_operations.bet import Bet
 from data_operations.track import Track
-
+# from beerme import get_race_data_espn
+# import beerme
 TARGET_RESULTS = f"./data"
 # from data_operations.db_hydrate import cursor
 
@@ -20,10 +22,13 @@ select_race_id_query = """select race_id
                             and track_id = ?"""
 insert_driver_query = """insert or replace into drivers (driver_name, driver_url) VALUES (?, ?)"""
 import logging
-
+DB_FILENAME = "../bets.db"
+import sqlite3
+from sqlite3 import Error
+from datetime import datetime
 logger = logging.getLogger(__name__)
 logging.basicConfig(filename='race.log', level=logging.INFO, filemode='w')
-logger.info('Started')
+logger.info(f'Started {datetime.now()}')
 
 
 class Race:
@@ -39,12 +44,18 @@ class Race:
         self.greg = Bet(player_name='Greg')
 
         self.bob = Bet(player_name='Bob')
+        try:
+            self._connection = sqlite3.connect(DB_FILENAME)
+            self._cursor = self._connection.cursor()
+        except Error as e:
+            print(f"Error: {DB_FILENAME} {e}")
+            exit()
 
         self._track = Track()
         self.race_results_dict = None
-        self._connection = None
+        # self._connection = None
         self.track.connection = self._connection
-        self._cursor = None
+        # self._cursor = None
         self.track.cursor = self._cursor
         self.csv_headers = None
 
@@ -167,11 +178,8 @@ class Race:
         return race
 
     def db_insert_driver(self, race_result: dict):
-        insert_query = """insert into drivers (driver_name, driver_url)
+        insert_query = """insert into drivers (driver_name, espn_driver_url)
                           VALUES (?, ?)"""
-        select_driver_query = """select driver_id
-                                 from drivers
-                                 where driver_name = ?"""
         try:
             race_result["DRIVER_URL"] = r"https://www.espn.com" + race_result["DRIVER_URL"]
             self._cursor.execute(insert_query, (race_result["DRIVER"], race_result["DRIVER_URL"]))
@@ -179,8 +187,12 @@ class Race:
         except Exception as e:
             # FIXME empty driver name
             # exit(f"{e.__str__()} DRIVER_URL={race_result['DRIVER_URL']} DRIVER={race_result['DRIVER']}")
+            logging.info(f"{e.__str__()} db_insert_driver()")
             pass
-        self._cursor.execute(select_driver_query, (race_result["DRIVER"],))
+        select_driver_query = """select driver_id
+                                 from drivers
+                                 where espn_driver_url = ?"""
+        self._cursor.execute(select_driver_query, (race_result["DRIVER_URL"],))
         driver_id = self._cursor.fetchone()
         race_result["DRIVER_ID"] = driver_id[0]
         # logging.INFO(f"Created {race_result["DRIVER"]}")
@@ -188,9 +200,9 @@ class Race:
         pass
 
     def db_insert_race_results(self):
-        insert_query = """insert into results (pos, driver_name, start, race_id, manufacturer, driver_url,
-                                               driver_id)
-                          VALUES (?, ?, ?, ?, ?, ?, ?)"""
+        insert_query = """insert into results (pos, driver_name, start, race_id, manufacturer, espn_driver_url,
+                                               driver_id, track_id)
+                          VALUES (?, ?, ?, ?, ?, ?, ?, ?)"""
         # get the race results from esp website
         self.race_results_dict, self.csv_headers = espn.get_race_results(self._race_results_url)
 
@@ -199,11 +211,12 @@ class Race:
             try:
                 self.db_insert_driver(race_result)
                 data_tuple = (race_result["POS"], race_result["DRIVER"], race_result["START"], self._race_id,
-                              race_result["MANUFACTURER"], race_result["DRIVER_URL"], race_result["DRIVER_ID"],)
+                              race_result["MANUFACTURER"], race_result["DRIVER_URL"], race_result["DRIVER_ID"], self.track.race_track_id)
                 self._cursor.execute(insert_query, data_tuple)
                 self._connection.commit()
             except Exception as e:
                 # FixME No Data Available https://www.espn.com/racing/raceresults/_/series/sprint/raceId/202102140001
+                logger.info(f"{e.__str__()} race.db_insert_race_results()")
                 return
 
     def __repr__(self):
@@ -211,3 +224,20 @@ class Race:
 
     def __str__(self):
         return f"{self._race_date} {self._race_name}"
+ESPN_RACING_RESULTS = "https://www.espn.com/racing/results/_/year"
+import data_operations.beerme as beerme
+if __name__ == "__main__":
+    # logger = logging.getLogger(__name__)
+    # logging.basicConfig(filename='race.log', level=logging.INFO, filemode='w')
+    # logger.info('Started')
+    year = 2026
+    url = f"{ESPN_RACING_RESULTS}/{year}"
+    try:
+        list_of_races = beerme.get_race_data_espn(url, year)
+    except Exception as e:
+        print(e)
+        pass
+
+    for race in list_of_races:
+        race.db_insert_race() # get the track id
+        race.db_insert_race_results()

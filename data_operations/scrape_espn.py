@@ -73,7 +73,11 @@ def get_race_results(url: str):
     :param url:
     :return:
     """
-    hot_soup = bs(url)
+    try:
+        hot_soup = bs(url)
+    except Exception as e:
+        print(f"{e}")
+        exit(f"Failed to retrieve data from {url}")
     cnt = 0
     all_results = []
     driver_results = {}

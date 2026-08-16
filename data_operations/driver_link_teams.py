@@ -118,9 +118,9 @@ def insert_teams_into_db(drivers):
 
 if __name__ == "__main__":
     driver = webdriver.Chrome()
-    # driver.get("https://www.nascar.com/news-media/2026/08/10/2026-nascar-cup-series-entry-list-for-richmond-raceway/")
+    driver.get("https://www.nascar.com/news-media/2026/08/10/2026-nascar-cup-series-entry-list-for-richmond-raceway/")
     # driver.get("https://www.nascar.com/news-media/2026/08/03/2026-nascar-cup-series-entry-list-for-iowa-speedway/")
-    driver.get("https://www.nascar.com/news-media/2026/03/22/2026-nascar-cup-series-entry-list-for-darlington-raceway/")
+    #driver.get("https://www.nascar.com/news-media/2026/03/22/2026-nascar-cup-series-entry-list-for-darlington-raceway/")
     # -raceway/")
     soup = BeautifulSoup(driver.page_source, "html.parser")
     race_drivers = get_drivers(soup)
