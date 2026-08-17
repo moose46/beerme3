@@ -1,9 +1,7 @@
-import sqlite3
-
 import data_operations.scrape_espn as espn
-from data_operations import beerme
 from data_operations.bet import Bet
 from data_operations.track import Track
+
 # from beerme import get_race_data_espn
 # import beerme
 TARGET_RESULTS = f"./data"
@@ -22,10 +20,12 @@ select_race_id_query = """select race_id
                             and track_id = ?"""
 insert_driver_query = """insert or replace into drivers (driver_name, driver_url) VALUES (?, ?)"""
 import logging
+
 DB_FILENAME = "../bets.db"
 import sqlite3
 from sqlite3 import Error
 from datetime import datetime
+
 logger = logging.getLogger(__name__)
 logging.basicConfig(filename='race.log', level=logging.INFO, filemode='w')
 logger.info(f'Started {datetime.now()}')
@@ -211,7 +211,8 @@ class Race:
             try:
                 self.db_insert_driver(race_result)
                 data_tuple = (race_result["POS"], race_result["DRIVER"], race_result["START"], self._race_id,
-                              race_result["MANUFACTURER"], race_result["DRIVER_URL"], race_result["DRIVER_ID"], self.track.race_track_id)
+                              race_result["MANUFACTURER"], race_result["DRIVER_URL"], race_result["DRIVER_ID"],
+                              self.track.race_track_id)
                 self._cursor.execute(insert_query, data_tuple)
                 self._connection.commit()
             except Exception as e:
@@ -224,8 +225,11 @@ class Race:
 
     def __str__(self):
         return f"{self._race_date} {self._race_name}"
+
+
 ESPN_RACING_RESULTS = "https://www.espn.com/racing/results/_/year"
 import data_operations.beerme as beerme
+
 if __name__ == "__main__":
     # logger = logging.getLogger(__name__)
     # logging.basicConfig(filename='race.log', level=logging.INFO, filemode='w')
@@ -239,5 +243,5 @@ if __name__ == "__main__":
         pass
 
     for race in list_of_races:
-        race.db_insert_race() # get the track id
+        race.db_insert_race()  # get the track id
         race.db_insert_race_results()
