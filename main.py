@@ -7,7 +7,9 @@ import sys
 from datetime import datetime
 from sqlite3 import Error
 
-from db_hydrate_tracks import cursor
+from data_operations.copy_csv_files import copy_race_results_csv
+
+# from db_hydrate_tracks import cursor
 
 DB_FILENAME = "bets.db"
 import logging
@@ -22,11 +24,27 @@ try:
 except Error as e:
     print(f"Error: {DB_FILENAME} {e}")
     exit()
-
+# logger = logging.getLogger(__name__)
+    # logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 if __name__ == "__main__":
-    logger = logging.getLogger(__name__)
-    logging.basicConfig(filename='main.log', level=logging.INFO, filemode='w')
-    logger.info('Started')
+    try:
+        log_file = "main.log"
+        logger = logging.getLogger("__main__")
+        # logger.setLevel(logging.DEBUG)
+        # handler = logging.StreamHandler(sys.stdout)
+        # logging.basicConfig(level=logging.DEBUG)
+        # logging.root.setLevel(logging.NOTSET)
+        # os.makedirs(os.path.dirname(log_file), exist_ok=True) if os.path.dirname(log_file) else None
+        logging.basicConfig(filename=log_file, level=logging.DEBUG, filemode='w',
+                            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+                            # handlers=[
+                            #     # logging.StreamHandler,
+                            #           logging.FileHandler(log_file, mode='w', encoding='utf-8')])
+        logging.info('Started')
+        logging.critical('Critical')
+    except PermissionError as e:
+        print(f"Error: __main__ {e}")
+        exit()
     year = datetime.now().year
     try:
         year = int(sys.argv[1])
@@ -34,7 +52,7 @@ if __name__ == "__main__":
         pass
 
     url = f"{ESPN_RACING_RESULTS}/{year}"
-    logger.info(f"Getting tracks from {url}")
+    logging.info(f"Getting tracks from {url}")
     # try:
     # create a list of races for the year
     list_of_races = beerme.get_race_data_espn(url, year)
@@ -46,4 +64,7 @@ if __name__ == "__main__":
         race.db_insert_race()
         race.db_insert_race_results()
         race.csv_create_file()
+        copy_race_results_csv([race.race_csv_filename])
         print(race)
+        logging.critical(race)
+        exit()

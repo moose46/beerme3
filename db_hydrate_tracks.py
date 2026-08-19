@@ -7,7 +7,7 @@ cursor = db.get_cursor()
 with open('data\\2026_races.json', "r") as file:
     races = json.load(file)
     for row in races:
-        print(row)
+        # print(row)
         """
         Check to see if track exists in the track table
         if it does not exist , create it and return the track id
