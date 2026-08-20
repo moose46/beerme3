@@ -19,7 +19,7 @@ select_race_id_query = """select race_id
                             and race_name = ?
                             and track_id = ?"""
 insert_driver_query = """insert or replace into drivers (driver_name, driver_url) VALUES (?, ?)"""
-import logging
+# import logging
 
 DB_FILENAME = "../bets.db"
 import sqlite3
@@ -30,9 +30,9 @@ from datetime import datetime
 
 class Race:
     def __init__(self):
-        self.logger = logging.getLogger(__name__)
-        logging.basicConfig(filename='race.log', level=logging.INFO, filemode='w')
-        self.logger.info(f'Started {datetime.now()}')
+        # self.logger = logging.getLogger(__name__)
+        # logging.basicConfig(filename='race.log', level=logging.INFO, filemode='w')
+        # self.logger.info(f'Started {datetime.now()}')
         self._race_name = None
         self._race_date = None
         self._race_results_url = None
@@ -191,7 +191,7 @@ class Race:
         except Exception as e:
             # FIXME empty driver name
             # exit(f"{e.__str__()} DRIVER_URL={race_result['DRIVER_URL']} DRIVER={race_result['DRIVER']}")
-            logging.info(f"{e.__str__()} db_insert_driver()")
+            # logging.info(f"{e.__str__()} db_insert_driver()")
             pass
         select_driver_query = """select driver_id
                                  from drivers
@@ -221,7 +221,7 @@ class Race:
                 self._connection.commit()
             except Exception as e:
                 # FixME No Data Available https://www.espn.com/racing/raceresults/_/series/sprint/raceId/202102140001
-                self.logger.info(f"{e.__str__()} race.db_insert_race_results()")
+                # self.logger.info(f"{e.__str__()} race.db_insert_race_results()")
                 return
 
     def __repr__(self):

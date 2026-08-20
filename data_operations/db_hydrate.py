@@ -4,11 +4,11 @@ from sqlite3 import Error
 from .track import Track
 
 DB_FILENAME = "bets.db"
-import logging
+# import logging
 
-logger = logging.getLogger(__name__)
-logging.basicConfig(filename='db_hydrate.log', level=logging.INFO, filemode='w')
-logger.info('Started')
+# logger = logging.getLogger(__name__)
+# logging.basicConfig(filename='db_hydrate.log', level=logging.INFO, filemode='w')
+# logger.info('Started')
 
 try:
     conn = sqlite3.connect(DB_FILENAME)
@@ -83,11 +83,11 @@ def hydrate_driver(driver_name, driver_url):
         cursor.execute(select_query, (driver_name,))
         driver_id = cursor.fetchone()
 
-        logger.info(f"{driver_name} {driver_id} driver created!")
+        # logger.info(f"{driver_name} {driver_id} driver created!")
         return driver_id[0]
     except Error as e:
-        logger.error(f"{driver_name} {driver_url} already exists!")
-
+        # logger.error(f"{driver_name} {driver_url} already exists!")
+        pass
 
 def hydrate_tracks(races):
     insert_query = """
@@ -105,7 +105,8 @@ def hydrate_tracks(races):
             print(f"{race.track_name} Created")
         except Error as e:
             # print(f"{hydrate_tracks} {data_tuple} {e}")
-            logger.error(f"{hydrate_tracks} {data_tuple} {e}")
+            # logger.error(f"{hydrate_tracks} {data_tuple} {e}")
+            pass
         cursor.execute(fetch_query, data_tuple)
         track = cursor.fetchone()
         # race.track_name = track["track_name"]

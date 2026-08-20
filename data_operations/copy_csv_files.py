@@ -12,10 +12,13 @@ def copy_race_results_csv(prace_dates: list):
         # print(f"{TARGET_RESULTS_BEER_ME}\\{race}")
         my_file = Path(PWD.joinpath(f"data\\{race_csv_filename}"))
         if my_file.is_file():
-            print(
+            try:
+                print(
                 f"-- Copying {Path(my_file)} to "
                 f"{TARGET_BEERME_BET_DATA2026}")
-            shutil.copy2(my_file, f"{TARGET_BEERME_BET_DATA2026}")  # copy2 preserves
+                shutil.copy2(my_file, f"{TARGET_BEERME_BET_DATA2026}")  # copy2 preserves
+            except FileNotFoundError:
+                pass
         else:
             print(
                 f"-- File Not Found {Path(my_file)} to \n "

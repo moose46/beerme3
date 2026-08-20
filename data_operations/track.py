@@ -1,5 +1,5 @@
 insert_query = f"""INSERT INTO tracks (track_name) VALUES (?)"""
-import logging
+# import logging
 
 fetch_query = """select count(*), track_id
                  from tracks
@@ -17,14 +17,14 @@ class Track(object):
         self._track_type = None
         self._cursor = None
         self._connection = None
-        track_logger = logging.getLogger("track")
-        track_logger.setLevel(logging.DEBUG)
-        logging.basicConfig(filename='track.log', level=logging.DEBUG, filemode='w', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        # track_logger = logging.getLogger("track")
+        # track_logger.setLevel(logging.DEBUG)
+        # logging.basicConfig(filename='track.log', level=logging.DEBUG, filemode='w', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         pass
 
     def db_get_race_track_id(self):
         data_tuple = (self._track_name,)
-        logging.info(f"data_tuple: {data_tuple}")
+        # logging.info(f"data_tuple: {data_tuple}")
         self._cursor.execute(fetch_query, data_tuple)
         ret = self._cursor.fetchone()
         self._race_track_id = ret[1]
@@ -33,7 +33,7 @@ class Track(object):
     def db_insert_track(self):
 
         data_tuple = (self._track_name,)
-        logging.info(f"data_tuple: {data_tuple}")
+        # logging.info(f"data_tuple: {data_tuple}")
         if self.db_get_race_track_id() is None:
             # logger.error(f"{data_tuple} {e}")
             self._cursor.execute(insert_query, (self._track_name,))
