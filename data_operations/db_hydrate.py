@@ -1,10 +1,13 @@
 import sqlite3
 from sqlite3 import Error
+from venv import logger
+
+from sqlalchemy.dialects.mysql import Insert
 
 from .track import Track
 
 DB_FILENAME = "bets.db"
-# import logging
+import logging
 
 # logger = logging.getLogger(__name__)
 # logging.basicConfig(filename='db_hydrate.log', level=logging.INFO, filemode='w')
@@ -89,6 +92,26 @@ def hydrate_driver(driver_name, driver_url):
         # logger.error(f"{driver_name} {driver_url} already exists!")
         pass
 
+def hydrate_track(track_name, track_url):
+    """
+
+    :param track_name:
+    :param track_url:
+    :return: -1 if it failed
+    """
+    insert_query = """insert into tracks (track_name, track_url)"""
+    select_query = """select track_id"""
+    try:
+        cursor.execute(insert_query, (track_name, track_url))
+        conn.commit()
+        cursor.execute(select_query, (track_name,))
+        track_id = cursor.fetchone()
+        return track_id[0]
+    except Insert as e:
+        logger.info(f"Error: {Insert} {e}")
+        cursor.execute(select_query, (track_name,))
+        return cursor.fetchone()
+
 def hydrate_tracks(races):
     insert_query = """
                    INSERT into tracks (track_name)
@@ -113,3 +136,5 @@ def hydrate_tracks(races):
         race.track.race_track_id = track[0]
         pass
     # hydrate_races_db(conn, cursor, race,track_id[0])
+if __name__ == "__main__":
+    hydrate_track("Bobs Raceway","https://www.youtube.com/results?search_query=Bobs Raceway")

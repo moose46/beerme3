@@ -7,6 +7,8 @@ Create YYYY_bets.json file for the year provided
 """
 
 import collections
+
+import db_hydrate_tracks
 import json
 import sys
 import datetime as datetime
@@ -76,7 +78,9 @@ if __name__ == "__main__":
                 track_names = get_track_name(soup,year= year)
 
                 for track in track_names:
+                    assert isinstance(track, object)
                     print(track)
+                    db_hydrate_tracks()
 
                 with open(f"{year}_races.json", "w") as file:
                     json.dump(track_names, file, indent=4)

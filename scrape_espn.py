@@ -1,12 +1,13 @@
 # https://stackoverflow.com/questions/69515086/error-attributeerror
 # -collections-has-no-attribute-callable-using-beautifu
 import collections
+import os
 import shutil
 import sys
 from pathlib import Path
-
+import json
 collections.Callable = collections.abc.Callable
-from settings import HOST, HEADERS
+from settings import HOST, HEADERS, TARGET_BEERME_BET_DATA2026
 import requests
 from bs4 import BeautifulSoup
 
@@ -63,7 +64,7 @@ def process_year_to_date_results(psoup):
         month = url_id[4:6]
         day = url_id[6:8]
         # print(f"year={year} month={month} day={day}")
-        output_file_name = f"{TARGET_RESULTS}/{month}-{day}-{year}.csv"
+        output_file_name = f"{os.getcwd()}/{month}-{day}-{year}.csv"
         # Create a list of race dates
         race_dates.append(f"{month}-{day}-{year}.csv")
 
@@ -99,7 +100,7 @@ def process_year_to_date_results(psoup):
 def copy_race_dates(prace_dates: list):
     for race in prace_dates:
         # print(f"{TARGET_RESULTS_BEER_ME}\\{race}")
-        my_file = Path(f"{TARGET_RESULTS_BEER_ME}\\{race}")
+        my_file = Path(f"{os.getcwd()}\\{race}")
         if not my_file.is_file():
             print(
                 f"-- Copying {Path(my_file)} to \n "
@@ -107,7 +108,7 @@ def copy_race_dates(prace_dates: list):
             shutil.copy2(f"{TARGET_RESULTS}\\{race}",
                          f"{TARGET_RESULTS_BEER_ME}")  # copy2 preserves
             # metadata
-
+ESPN_RACING_RESULTS = "https://www.espn.com/racing/results/_/year/"
 
 if __name__ == "__main__":
     race_dates = []
@@ -150,7 +151,7 @@ if __name__ == "__main__":
         url = f"{ESPN_RACING_RESULTS}{year}"
         try:
             if soup := bs(url):
-                track_names = get_track_name(soup, year=year)
+                track_names = get_track_name(soup)
 
                 for track in track_names:
                     print(track)

@@ -5,7 +5,7 @@ class BetData2026_1:
     def __init__(self):
         self.individual_bets = defaultdict(dict)
         self.individual_bets["02-15-2026"] = {
-            "Greg": {'Driver': "William Byron", "Finish": 0, "beers": 0},
+            "Greg": {"Driver": "William Byron", "Finish": 0, "beers": 0},
             "Bob": {"Driver": "Ryan Blaney", "Finish": 0, "beers": 0},
             "Track": "Daytona",
             "badge_color": "bg-warning text-dark",
@@ -72,57 +72,63 @@ class BetData2026_1:
             "badge_color": "bg-warning text-dark",
         }
         self.individual_bets["05-10-2026"] = {
-            "Greg":{"Driver": "Shane van Gisbergen","Finish":0,"beers":0},
-            "Bob": {"Driver":"Ty Gibbs","Finish":0,"beers":0},
+            "Greg": {"Driver": "Shane van Gisbergen", "Finish": 0, "beers": 0},
+            "Bob": {"Driver": "Ty Gibbs", "Finish": 0, "beers": 0},
             "Track": "Watkins Glen",
             "badge_color": "bg-warning text-dark",
         }
         self.individual_bets["05-24-2026"] = {
-            "Greg": {"Driver":"Denny Hamlin","Finish":0,"beers":0},
-            "Bob": {"Driver":"Ross Chastain","Finish":0,"beers":0},
+            "Greg": {"Driver": "Denny Hamlin", "Finish": 0, "beers": 0},
+            "Bob": {"Driver": "Ross Chastain", "Finish": 0, "beers": 0},
             "Track": "Charlotte",
             "badge_color": "bg-warning text-dark",
         }
         self.individual_bets["05-31-2026"] = {
-            "Greg": {"Driver":"Tyler Reddick","Finish":0,"beers":0},
-            "Bob":{"Driver":"Denny Hamlin","Finish":0,"beers":0},
+            "Greg": {"Driver": "Tyler Reddick", "Finish": 0, "beers": 0},
+            "Bob": {"Driver": "Denny Hamlin", "Finish": 0, "beers": 0},
             "Track": "Nashville",
             "badge_color": "bg-warning text-dark",
         }
         self.individual_bets["06-07-2026"] = {
-            "Greg":{"Driver": "Kyle Larson","Finish":0,"beers":0},
-            "Bob": {"Driver":"Tyler Reddick","Finish":0,"beers":0},
+            "Greg": {"Driver": "Kyle Larson", "Finish": 0, "beers": 0},
+            "Bob": {"Driver": "Tyler Reddick", "Finish": 0, "beers": 0},
             "Track": "Michigan",
             "badge_color": "bg-warning text-dark",
         }
         self.individual_bets["06-14-2026"] = {
-            "Greg": {"Driver":"Denny Hamlin","Finish":0,"beers":0},
-            "Bob": {"Driver":"Chase Briscoe","Finish":0,"beers":0},
+            "Greg": {"Driver": "Denny Hamlin", "Finish": 0, "beers": 0},
+            "Bob": {"Driver": "Chase Briscoe", "Finish": 0, "beers": 0},
             "Track": "Pocono",
             "badge_color": "bg-warning text-dark",
         }
         self.individual_bets["06-21-2026"] = {
-            "Greg": {"Driver":"Connor Zilisch","Finish":0,"beers":0},
-            "Bob": {"Driver":"Shane van Gisbergen","Finish":0,"beers":0},
+            "Greg": {"Driver": "Connor Zilisch", "Finish": 0, "beers": 0},
+            "Bob": {"Driver": "Shane van Gisbergen", "Finish": 0, "beers": 0},
             "Track": "Coronado",
             "badge_color": "bg-warning text-dark",
         }
         self.individual_bets["06-28-2026"] = {
-            "Greg": {"Driver":"Shane van Gisbergen","Finish":0,"beers":0},
-            "Bob": {"Driver":"Kyle Larson","Finish":0,"beers":0},
+            "Greg": {"Driver": "Shane van Gisbergen", "Finish": 0, "beers": 0},
+            "Bob": {"Driver": "Kyle Larson", "Finish": 0, "beers": 0},
             "Track": "Sonoma Raceway",
             "badge_color": "bg-warning text-dark",
         }
         self.individual_bets["07-05-2026"] = {
-            "Greg":{"Driver": "Kyle Larson","Finish":0,"beers":0},
-            "Bob": {"Driver":"Denny Hamlin","Finish":0,"beers":0},
+            "Greg": {"Driver": "Kyle Larson", "Finish": 0, "beers": 0},
+            "Bob": {"Driver": "Denny Hamlin", "Finish": 0, "beers": 0},
             "Track": "Chicagoland Speedway",
             "badge_color": "bg-warning text-dark",
         }
         self.individual_bets["07-12-2026"] = {
-            "Greg":{"Driver": "Ryan Blaney","Finish":0,"beers":0},
-            "Bob": {"Driver":"Chase Elliott","Finish":0,"beers":0},
+            "Greg": {"Driver": "Ryan Blaney", "Finish": 0, "beers": 0},
+            "Bob": {"Driver": "Chase Elliott", "Finish": 0, "beers": 0},
             "Track": "EchoPark Speedway",
+            "badge_color": "bg-warning text-dark",
+        }
+        self.individual_bets["07-26-2026"] = {
+            "Greg": {"Driver": "Denny Hamlin", "Finish": 0, "beers": 0},
+            "Bob": {"Driver": "Carson Hosevar", "Finish": 0, "beers": 0},
+            "Track": "Indy",
             "badge_color": "bg-warning text-dark",
         }
 
@@ -255,6 +261,36 @@ class BetData2026:
             "Greg": "Ryan Blaney",
             "Bob": "Chase Elliott",
             "Track": "EchoPark Speedway",
+            "badge_color": "bg-warning text-dark",
+        }
+        self.individual_bets["07-19-2026"] = {
+            "Greg": "William Byron",
+            "Bob": "Christopher Bell",
+            "Track": "North Wilkesboro",
+            "badge_color": "bg-warning text-dark",
+        }
+        self.individual_bets["07-26-2026"] = {
+            "Greg": "Denny Hamlin",
+            "Bob": "Carson Hocevar",
+            "Track": "Indy",
+            "badge_color": "bg-warning text-dark",
+        }
+        self.individual_bets["08-09-2026"] = {
+            "Greg": "Denny Hamlin",
+            "Bob": "Ryan Blaney",
+            "Track": "Iowa Speedway",
+            "badge_color": "bg-warning text-dark",
+        }
+        self.individual_bets["08-15-2026"] = {
+            "Greg": "Ryan Blaney",
+            "Bob": "Denny Hamlin",
+            "Track": "Richmond Raceway",
+            "badge_color": "bg-warning text-dark",
+        }
+        self.individual_bets["08-23-2026"] = {
+            "Greg": "Ryan Blaney",
+            "Bob": "Denny Hamlin",
+            "Track": "New Hampshire Raceway",
             "badge_color": "bg-warning text-dark",
         }
 
