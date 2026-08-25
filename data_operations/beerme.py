@@ -10,11 +10,12 @@ after running this program, then run load_tracks_db.py
 import collections
 import datetime as datetime
 import json
+import logging
 import re
 import sys
 
 from data_operations.race import Race
-from .db_hydrate import hydrate_driver
+# from .db_hydrate import hydrate_driver
 
 collections.Callable = collections.abc.Callable
 from settings import HEADERS
@@ -64,8 +65,9 @@ def get_race_results(url):
                     # tr.find_all('td')
                     # position =  tr.find_all('a')[POS].get_text()
                     # tr.find_all('td')[1].find('a').get('href')
-                    hydrate_driver(tr.find_all('td')[DRIVER].get_text(),
-                                   tr.find_all('td')[DRIVER].find('a').get('href'))
+                    # todo: add hydrate_driver()
+                    # hydrate_driver(tr.find_all('td')[DRIVER].get_text(),
+                    #                tr.find_all('td')[DRIVER].find('a').get('href'))
 
                     # print(
                     #     f"{tr.find_all('td')[POS].get_text()} {tr.find_all('td')[DRIVER].get_text()} "
@@ -81,7 +83,7 @@ def get_race_results(url):
                     #     print()
 
                 except Exception as e:
-                    print(f"Failed to retrieve {tr[POS]} {e.__repr__()}")
+                    logging.debug(f"Failed to retrieve {tr[POS]} {e.__repr__()}")
                     exit(e.__str__())
                 # for data_cell in tr.find_all("td"):
                 #     if cnt == 0:

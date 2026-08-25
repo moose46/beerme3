@@ -2,7 +2,7 @@ import sqlite3
 from sqlite3 import Error
 from venv import logger
 
-from sqlalchemy.dialects.mysql import Insert
+# from sqlalchemy.dialects.mysql import Insert
 
 from .track import Track
 

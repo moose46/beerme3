@@ -2,17 +2,25 @@
 # -collections-has-no-attribute-callable-using-beautifu
 import collections
 import json
+import os
 import sys
 from pathlib import Path
 
 collections.Callable = collections.abc.Callable
-from settings import SOURCE_BEERME_BET_DATA2026, HEADERS, TRACK_HOST
+from settings import SOURCE_BEERME_BET_DATA2026, HEADERS, FRCS_TRACK_HOST
 import requests
 from bs4 import BeautifulSoup
+from logging import debug, Formatter, StreamHandler, getLogger, ERROR, error, DEBUG, FileHandler, INFO
+import logging.config
 
 
 #  python scrape_espn.py
 import re
+
+logging.config.fileConfig('logging.conf')
+logger = getLogger("track")
+logger.debug(f"Track Initialized")
+
 
 def remove_ellipsis(text: str) -> str:
     """
@@ -32,6 +40,7 @@ def bs(url):
     if response.status_code in [200]:
         soup_is_ready = BeautifulSoup(response.text, "html.parser")
         # print(response.status_code)
+        logging.debug(f"Soup is ready: {response.status_code}")
         return soup_is_ready
     elif response.status_code == 202:
         exit(f"No races found for {url}, response_code = {response.status_code}")
@@ -131,8 +140,9 @@ if __name__ == "__main__":
         year = 2026  # exit(f"Enter a valid race year: Example: python scrape_espn.py 2025  # \n{e.__str__()}")
 
     for year in range(year, year + 1):
-        print(f"Processing year: {year}")
-        url = f"{TRACK_HOST}{year}"
+        logging.info(f"Processing year: {year}")
+        url = f"{FRCS_TRACK_HOST}{year}"
+        logging.info(f"Getting tracks from {url}")
         try:
             if soup := bs(url):
                 track_names = get_track_name(soup)
@@ -140,15 +150,16 @@ if __name__ == "__main__":
                 for track in track_names:
                     print(track)
 
-                with open(f"{SOURCE_BEERME_BET_DATA2026}\\{year}_races.json", "w") as file:
+                with open(f"{os.getcwd()}\\{year}_races.json", "w") as file:
                     json.dump(track_names, file, indent=4)
         except Exception as e:
-            exit(e.__str__())
+            logging.info(e.__str__())
+            exit(e)
         try:
             if soup := bs(url):
                 race_dates = process_year_to_date_results(soup)
             else:
-                print(f"No races found for year {year}")
+                logging.info(f"No races found for year {year}")
         except Exception as e:
             exit(e.__str__())
     # copy race dates to visual studio beerme2

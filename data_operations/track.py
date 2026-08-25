@@ -1,5 +1,9 @@
+import os
+
 insert_query = f"""INSERT INTO tracks (track_name) VALUES (?)"""
-# import logging
+from logging import debug, Formatter, StreamHandler, getLogger, ERROR, error, DEBUG, FileHandler, INFO
+import logging.config
+
 
 fetch_query = """select count(*), track_id
                  from tracks
@@ -8,6 +12,9 @@ insert_query = """
                INSERT into tracks (track_name)
                VALUES (?) \
                """
+import sqlite3
+from sqlite3 import Error
+DB_FILENAME = os.getcwd() + "\\..\\bets.db"
 
 
 class Track(object):
@@ -17,17 +24,24 @@ class Track(object):
         self._track_type = None
         self._cursor = None
         self._connection = None
-        # track_logger = logging.getLogger("track")
-        # track_logger.setLevel(logging.DEBUG)
-        # logging.basicConfig(filename='track.log', level=logging.DEBUG, filemode='w', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        pass
+        logging.config.fileConfig('../logging.conf')
+        logger = getLogger("track")
+        logger.info(f"Track Class Initialized")
+        try:
+            self._connection = sqlite3.connect(DB_FILENAME)
+            self._cursor = self._connection.cursor()
+        except Error as e:
+            logging.debug(f"Error: {DB_FILENAME} {e}")
+            exit(str(e))
 
     def db_get_race_track_id(self):
         data_tuple = (self._track_name,)
-        # logging.info(f"data_tuple: {data_tuple}")
+        logging.info(f"data_tuple: {data_tuple}")
         self._cursor.execute(fetch_query, data_tuple)
         ret = self._cursor.fetchone()
+        logging.info(f"ret: {ret}")
         self._race_track_id = ret[1]
+        logging.info(f"race_track_id: {self._race_track_id}")
         return self._race_track_id
 
     def db_insert_track(self):
@@ -35,12 +49,12 @@ class Track(object):
         data_tuple = (self._track_name,)
         # logging.info(f"data_tuple: {data_tuple}")
         if self.db_get_race_track_id() is None:
-            # logger.error(f"{data_tuple} {e}")
+            logging.error(f"{data_tuple} {e}")
             self._cursor.execute(insert_query, (self._track_name,))
             self._connection.commit()
             self._cursor.execute(fetch_query, data_tuple)
             ret = self._cursor.fetchone()
-            print(f"{self._track_name} Created")
+            logging.debug(f"{self._track_name} Created")
             self._race_track_id = ret[1]
         return self._race_track_id
 
@@ -89,3 +103,9 @@ class Track(object):
     @track_type.setter
     def track_type(self, value):
         self._track_type = value
+
+
+if __name__ == "__main__":
+    track = Track()
+    track.track_name= "Pocono Raceway"
+    track.db_get_race_track_id()

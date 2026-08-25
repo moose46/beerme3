@@ -67,9 +67,9 @@ if __name__ == "__main__":
         race.connection = conn
         # race.track.db_get_race_track_id()
         race.track.db_insert_track()
-        race.db_insert_race()
-        race.db_insert_race_results()
-        race.csv_create_file()
-        copy_race_results_csv([race.race_csv_filename])
+        # race.db_insert_race()
+        # race.db_insert_race_results()
+        # race.csv_create_file()
+        # copy_race_results_csv([race.race_csv_filename])
         # print(race)
         exit()
