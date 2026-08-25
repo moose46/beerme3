@@ -40,7 +40,7 @@ def bs(url):
     if response.status_code in [200]:
         soup_is_ready = BeautifulSoup(response.text, "html.parser")
         # print(response.status_code)
-        logging.debug(f"Soup is ready: {response.status_code}")
+        logging.info(f"Soup is ready: {response.status_code}")
         return soup_is_ready
     elif response.status_code == 202:
         exit(f"No races found for {url}, response_code = {response.status_code}")
@@ -50,25 +50,25 @@ def bs(url):
 
 
 def get_track_name(psoup):
-    rows = psoup.find_all("tbody")
+    rows = psoup.find_all("td", {"data-column": "track"})
     tracks = []
     for row in rows:
-        track_name = row.find_all("td", {"races-column": "track"})
-        race_dates = row.find_all("td", {"races-column": "date"})
-        race_television = row.find_all("td", {"races-column": "television"})
-        race_winner = row.find_all("td", {"races-column": "winner"})
-        win_make = row.find_all("td", {"races-column": "win_make"})
-        race_name = row.find_all("td", {"races-column": "race"})
-
-        for index in range(len(race_dates)):
-            a_track_dict = dict(track=track_name[index].get_text(strip=True), date=race_dates[index].get(
-                "races-sort")[5:7] + "-" + race_dates[index].get("races-sort")[8:10] + "-" + race_dates[index].get(
-                "races-sort")[0:4], time=race_dates[index].get("races-sort")[11:19],
-                                television=race_television[index].get_text(), win_make=win_make[index].get_text(),
-                                race_winner=race_winner[index].get_text(), race_name=race_name[index].get_text())
-            a_track_dict["track"] = remove_ellipsis(a_track_dict["track"])
-            a_track_dict["race_name"] = remove_ellipsis(a_track_dict["race_name"])
-            tracks.append(a_track_dict)
+        track_name = row.text
+        # race_dates = rows[1].find("td", {"data-column": "date"}).text
+        # race_television = rows[1].find("td", {"data-column": "television"}).text
+        # race_winner = rows[1].find("td", {"data-column": "winner"}).text
+        # win_make = rows[1].find("td", {"data-column": "win_make"}).text
+        # race_name = rows[1].find("td", {"data-column": "race"}).text
+        tracks.append(track_name)
+        # for index in range(len(race_dates)):
+        #     a_track_dict = dict(track=track_name[index].get_text(strip=True), date=race_dates[index].get(
+        #         "races-sort")[5:7] + "-" + race_dates[index].get("races-sort")[8:10] + "-" + race_dates[index].get(
+        #         "races-sort")[0:4], time=race_dates[index].get("races-sort")[11:19],
+        #                         television=race_television[index].get_text(), win_make=win_make[index].get_text(),
+        #                         race_winner=race_winner[index].get_text(), race_name=race_name[index].get_text())
+        #     a_track_dict["track"] = remove_ellipsis(a_track_dict["track"])
+        # a_track_dict["race_name"] = remove_ellipsis(a_track_dict["race_name"])
+        # tracks.append(a_track_dict)
             # tracks.append(race_dates[index].get_text(strip=True))  # x = data_cell  #
             # tracks.append( {"track": data_cell.get_text()})  # for race_date in race_dates:  #     tracks.add(
             # race_date.get_text())
