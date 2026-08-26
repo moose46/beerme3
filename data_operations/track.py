@@ -14,7 +14,7 @@ insert_query = """
                """
 import sqlite3
 from sqlite3 import Error
-DB_FILENAME = os.getcwd() + "\\..\\bets.db"
+DB_FILENAME = os.getcwd() + "//bets.db"
 
 
 class Track(object):
@@ -24,12 +24,13 @@ class Track(object):
         self._track_type = None
         self._cursor = None
         self._connection = None
-        logging.config.fileConfig('../logging.conf')
+        logging.config.fileConfig('logging.conf')
         logger = getLogger("track")
         logger.info(f"Track Class Initialized")
         try:
             self._connection = sqlite3.connect(DB_FILENAME)
             self._cursor = self._connection.cursor()
+            logging.info(f"Connected to Database")
         except Error as e:
             logging.debug(f"Error: {DB_FILENAME} {e}")
             exit(str(e))
@@ -47,7 +48,7 @@ class Track(object):
     def db_insert_track(self):
 
         data_tuple = (self._track_name,)
-        # logging.info(f"data_tuple: {data_tuple}")
+        logging.info(f"data_tuple: {data_tuple}")
         if self.db_get_race_track_id() is None:
             logging.error(f"{data_tuple} {e}")
             self._cursor.execute(insert_query, (self._track_name,))

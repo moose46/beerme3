@@ -12,7 +12,7 @@ import requests
 from bs4 import BeautifulSoup
 from logging import debug, Formatter, StreamHandler, getLogger, ERROR, error, DEBUG, FileHandler, INFO
 import logging.config
-
+from data_operations.track import Track
 
 #  python scrape_espn.py
 import re
@@ -50,16 +50,22 @@ def bs(url):
 
 
 def get_track_name(psoup):
-    rows = psoup.find_all("td", {"data-column": "track"})
+    track_rows = psoup.find_all("td", {"data-column": "track"})
+    date_rows = psoup.find_all("td", {"data-column": "date"}, "data-sort")
+    race_rows = psoup.find_all("td", {"data-column": "race"},)
     tracks = []
-    for row in rows:
+    track_rows.__len__()
+    for index, row in enumerate(track_rows):
         track_name = row.text
+        track_url = row.find("a").get("href")
+        race_date = date_rows[index]['data-sort'] # get the 12/20/2026 format from the date
+        race_name = race_rows[index].text
         # race_dates = rows[1].find("td", {"data-column": "date"}).text
         # race_television = rows[1].find("td", {"data-column": "television"}).text
         # race_winner = rows[1].find("td", {"data-column": "winner"}).text
         # win_make = rows[1].find("td", {"data-column": "win_make"}).text
         # race_name = rows[1].find("td", {"data-column": "race"}).text
-        tracks.append(track_name)
+        tracks.append({"track":track_name, "race_date":race_date, "race_name":race_name,"track_url":track_url})
         # for index in range(len(race_dates)):
         #     a_track_dict = dict(track=track_name[index].get_text(strip=True), date=race_dates[index].get(
         #         "races-sort")[5:7] + "-" + race_dates[index].get("races-sort")[8:10] + "-" + race_dates[index].get(
@@ -147,8 +153,11 @@ if __name__ == "__main__":
             if soup := bs(url):
                 track_names = get_track_name(soup)
 
-                for track in track_names:
-                    print(track)
+                for track_data in track_names:
+                    print(track_data)
+                    track = Track()
+                    track.track_name = track_data['track']
+                    track.db_insert_track()
 
                 with open(f"{os.getcwd()}\\{year}_races.json", "w") as file:
                     json.dump(track_names, file, indent=4)
