@@ -7,15 +7,20 @@ Create YYYY_bets.json file for the year provided
 """
 
 import collections
-
-import db_hydrate_tracks
-import json
-import sys
 import datetime as datetime
 import re
+import sys
+from data_operations.track import Track
+import json
+import logging
+import logging.config
 
+logging.config.fileConfig("logging.conf")
+# error_handler = logging.FileHandler("scrape_espn_races.log")
+# error_handler.setLevel(logging.DEBUG)
+logger = logging.getLogger("scrape_espn_races")
 collections.Callable = collections.abc.Callable
-from settings import SOURCE_BEERME_BET_DATA2026, HEADERS
+from settings import HEADERS
 import requests
 from bs4 import BeautifulSoup
 
@@ -24,15 +29,15 @@ ESPN_RACING_RESULTS = "https://www.espn.com/racing/results/_/year/"
 
 #  python scrape_espn.py
 
-
 def bs(url):
     response = requests.get(url, headers=HEADERS)
-    print(f"{response}")
+    # print(f"{response}")
     if response.status_code in [200]:
         soup_is_ready = BeautifulSoup(response.content, "html.parser")
-        # print(response.status_code)
+        logger.info(f"{url} Response Code: {response.status_code}")
         return soup_is_ready
     elif response.status_code == 202:
+        logger.info(f"{url} Response Code: {response.status_code}")
         exit(f"No data found for {url}, response_code = {response.status_code}")
     else:
         print(f"Failed to retrieve data from {url}")
@@ -40,6 +45,12 @@ def bs(url):
 
 
 def get_track_name(psoup, year):
+    """
+
+    :param psoup:
+    :param year:
+    :return: dictionary containing: race_name, race_date, race_track,race_results url
+    """
     rows = psoup.find_all("tr")
     races = []
     skip = 1
@@ -58,8 +69,7 @@ def get_track_name(psoup, year):
         race_results = track_name[1].find_all("a")[0]["href"]
         races.append(
             {"race_date": race_date.strftime("%m/%d/%Y"), "race_track_name": race_track, "race_results": race_results,
-             "race_name": race_name,
-             "greg": {'driver': '', 'finish': 0}, "bob": {'driver': '', 'finish': 0}})
+             "race_name": race_name, })
     return races
 
 
@@ -71,17 +81,21 @@ if __name__ == "__main__":
         year = 2025  # exit(f"Enter a valid race year: Example: python scrape_espn.py 2025  # \n{e.__str__()}")
 
     for year in range(year, year + 1):
-        print(f"Processing year: {year}")
+        logger.info(f"Processing year: {year}")
+        # url is an espn nascar list of all races completed for that year
         url = f"{ESPN_RACING_RESULTS}{year}"
         try:
             if soup := bs(url):
-                track_names = get_track_name(soup,year= year)
+                track_names = get_track_name(soup, year=year)
 
                 for track in track_names:
                     assert isinstance(track, object)
-                    print(track)
-                    db_hydrate_tracks()
-
+                    the_track = Track()
+                    the_track.track_name = track["race_track_name"]
+                    the_track.db_insert_track()
+                    logger.info(f"{track["race_date"]:16} {track["race_track_name"]}")
+                # creates a YYYY_races.json file
+                logging.info(f"Saving {year}_races.json")
                 with open(f"{year}_races.json", "w") as file:
                     json.dump(track_names, file, indent=4)
         except Exception as e:

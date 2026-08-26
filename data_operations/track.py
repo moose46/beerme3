@@ -30,27 +30,30 @@ class Track(object):
         try:
             self._connection = sqlite3.connect(DB_FILENAME)
             self._cursor = self._connection.cursor()
-            logging.info(f"Connected to Database")
+            logging.debug(f"Connected to Database")
         except Error as e:
             logging.debug(f"Error: {DB_FILENAME} {e}")
             exit(str(e))
 
     def db_get_race_track_id(self):
         data_tuple = (self._track_name,)
-        logging.info(f"data_tuple: {data_tuple}")
+        logging.debug(f"data_tuple: {data_tuple}")
         self._cursor.execute(fetch_query, data_tuple)
         ret = self._cursor.fetchone()
-        logging.info(f"ret: {ret}")
+        # logging.debug(f"race_track_id: {ret}")
         self._race_track_id = ret[1]
-        logging.info(f"race_track_id: {self._race_track_id}")
+        logging.debug(f"race_track_id: {self._race_track_id}")
         return self._race_track_id
 
-    def db_insert_track(self):
+    def db_insert_track(self, track_name: str = None):
 
-        data_tuple = (self._track_name,)
-        logging.info(f"data_tuple: {data_tuple}")
+        if track_name is None:
+            data_tuple = (self._track_name,)
+        else:
+            data_tuple = (track_name,)
+        logging.debug(f"data_tuple: {data_tuple}")
         if self.db_get_race_track_id() is None:
-            logging.error(f"{data_tuple} {e}")
+            # logging.debug(f"{data_tuple} {data_tuple}")
             self._cursor.execute(insert_query, (self._track_name,))
             self._connection.commit()
             self._cursor.execute(fetch_query, data_tuple)
