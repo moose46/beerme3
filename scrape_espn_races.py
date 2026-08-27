@@ -15,10 +15,8 @@ import json
 import logging
 import logging.config
 
-logging.config.fileConfig("logging.conf")
 # error_handler = logging.FileHandler("scrape_espn_races.log")
 # error_handler.setLevel(logging.DEBUG)
-logger = logging.getLogger("scrape_espn_races")
 collections.Callable = collections.abc.Callable
 from settings import HEADERS
 import requests
@@ -29,6 +27,7 @@ ESPN_RACING_RESULTS = "https://www.espn.com/racing/results/_/year/"
 
 #  python scrape_espn.py
 
+logger = logging.getLogger(__name__)
 def bs(url):
     response = requests.get(url, headers=HEADERS)
     # print(f"{response}")
@@ -40,7 +39,7 @@ def bs(url):
         logger.info(f"{url} Response Code: {response.status_code}")
         exit(f"No data found for {url}, response_code = {response.status_code}")
     else:
-        print(f"Failed to retrieve data from {url}")
+        logging.exception(f"Failed to retrieve data from {url}")
         return None
 
 
@@ -73,6 +72,8 @@ def get_track_name(psoup, year):
     return races
 
 def run():
+    logging.config.fileConfig("logging.conf")
+    logger = logging.getLogger("scrape_espn_races")
     race_dates = []
     try:
         year = int(sys.argv[1])
@@ -94,10 +95,11 @@ def run():
                     the_track.db_insert_track()
                     logger.info(f"{track["race_date"]:16} {track["race_track_name"]}")
                 # creates a YYYY_races.json file
-                logging.info(f"Saving {year}_races.json")
+                logger.info(f"Saving {year}_races.json")
                 with open(f"{year}_races.json", "w") as file:
                     json.dump(track_names, file, indent=4)
         except Exception as e:
+            logging.exception(f"Failed to process year: {year}")
             exit(e.__str__())
 
 if __name__ == "__main__":

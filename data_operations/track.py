@@ -25,24 +25,23 @@ class Track(object):
         self._cursor = None
         self._connection = None
         # logging.config.fileConfig('logging.conf')
-        logger = getLogger("track")
+        self._logger = getLogger(__name__)
         # logger.info(f"Track Class Initialized")
         try:
             self._connection = sqlite3.connect(DB_FILENAME)
             self._cursor = self._connection.cursor()
-            logging.debug(f"Connected to Database")
+            # self._logger.debug(f"Connected to Database {DB_FILENAME}")
         except Error as e:
-            logging.debug(f"Error: {DB_FILENAME} {e}")
-            exit(str(e))
+            logging.exception(f"Error: {DB_FILENAME}")
 
     def db_get_race_track_id(self):
         data_tuple = (self._track_name,)
-        logging.debug(f"data_tuple: {data_tuple}")
+        # self._logger.debug(f"data_tuple: {data_tuple}")
         self._cursor.execute(fetch_query, data_tuple)
         ret = self._cursor.fetchone()
         # logging.debug(f"race_track_id: {ret}")
         self._race_track_id = ret[1]
-        logging.info(f"{self._track_name}: {self._race_track_id}")
+        self._logger.info(f"{self._track_name}: {self._race_track_id} {self._track_type}")
         return self._race_track_id
 
     def db_insert_track(self, track_name: str = None):
@@ -58,7 +57,7 @@ class Track(object):
             self._connection.commit()
             self._cursor.execute(fetch_query, data_tuple)
             ret = self._cursor.fetchone()
-            logging.info(f"{self._track_name} Created")
+            self._logger.info(f"{self._track_name} Created")
             self._race_track_id = ret[1]
         return self._race_track_id
 
