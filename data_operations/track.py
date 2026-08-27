@@ -24,9 +24,9 @@ class Track(object):
         self._track_type = None
         self._cursor = None
         self._connection = None
-        logging.config.fileConfig('logging.conf')
+        # logging.config.fileConfig('logging.conf')
         logger = getLogger("track")
-        logger.info(f"Track Class Initialized")
+        # logger.info(f"Track Class Initialized")
         try:
             self._connection = sqlite3.connect(DB_FILENAME)
             self._cursor = self._connection.cursor()
@@ -42,7 +42,7 @@ class Track(object):
         ret = self._cursor.fetchone()
         # logging.debug(f"race_track_id: {ret}")
         self._race_track_id = ret[1]
-        logging.debug(f"race_track_id: {self._race_track_id}")
+        logging.info(f"{self._track_name}: {self._race_track_id}")
         return self._race_track_id
 
     def db_insert_track(self, track_name: str = None):
@@ -51,14 +51,14 @@ class Track(object):
             data_tuple = (self._track_name,)
         else:
             data_tuple = (track_name,)
-        logging.debug(f"data_tuple: {data_tuple}")
+        # logging.info(f"data_tuple: {data_tuple}")
         if self.db_get_race_track_id() is None:
             # logging.debug(f"{data_tuple} {data_tuple}")
             self._cursor.execute(insert_query, (self._track_name,))
             self._connection.commit()
             self._cursor.execute(fetch_query, data_tuple)
             ret = self._cursor.fetchone()
-            logging.debug(f"{self._track_name} Created")
+            logging.info(f"{self._track_name} Created")
             self._race_track_id = ret[1]
         return self._race_track_id
 

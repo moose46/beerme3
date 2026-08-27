@@ -34,7 +34,7 @@ def bs(url):
     # print(f"{response}")
     if response.status_code in [200]:
         soup_is_ready = BeautifulSoup(response.content, "html.parser")
-        logger.info(f"{url} Response Code: {response.status_code}")
+        logger.info(f"Response Code: {response.status_code}")
         return soup_is_ready
     elif response.status_code == 202:
         logger.info(f"{url} Response Code: {response.status_code}")
@@ -72,8 +72,7 @@ def get_track_name(psoup, year):
              "race_name": race_name, })
     return races
 
-
-if __name__ == "__main__":
+def run():
     race_dates = []
     try:
         year = int(sys.argv[1])
@@ -100,3 +99,6 @@ if __name__ == "__main__":
                     json.dump(track_names, file, indent=4)
         except Exception as e:
             exit(e.__str__())
+
+if __name__ == "__main__":
+    run()
