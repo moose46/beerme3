@@ -10,6 +10,8 @@ import collections
 import datetime as datetime
 import re
 import sys
+
+from data_operations.race import Race
 from data_operations.track import Track
 import json
 import logging
@@ -65,9 +67,9 @@ def get_track_name(psoup, year):
         race_track = track_name[1].text
         # remove the race name, and only the track name is left
         race_track = re.sub(f"{race_name}", "", race_track)
-        race_results = track_name[1].find_all("a")[0]["href"]
+        race_results_url = track_name[1].find_all("a")[0]["href"]
         races.append(
-            {"race_date": race_date.strftime("%m/%d/%Y"), "race_track_name": race_track, "race_results": race_results,
+            {"race_date": race_date.strftime("%m/%d/%Y"), "race_track_name": race_track, "race_results_url": race_results_url,
              "race_name": race_name, })
     return races
 
@@ -94,6 +96,13 @@ def run():
                     the_track.track_name = track["race_track_name"]
                     the_track.db_insert_track()
                     logger.info(f"{track["race_date"]:16} {track["race_track_name"]}")
+                    race = Race()
+                    race.race_name = track["race_name"]
+                    race.race_date = track["race_date"]
+                    race.race_results_url = track["race_results_url"]
+                    race.track.race_track_id = the_track.race_track_id
+                    race.race_track_name = track["race_track_name"]
+                    race.db_insert_race()
                 # creates a YYYY_races.json file
                 logger.info(f"Saving {year}_races.json")
                 with open(f"{year}_races.json", "w") as file:
