@@ -20,12 +20,12 @@ select_race_id_query = """select race_id
                             and track_id = ?"""
 insert_driver_query = """insert or replace into drivers (driver_name, driver_url) VALUES (?, ?)"""
 import logging
+import os
+DB_FILENAME = os.getcwd() + "//bets.db"
 
-DB_FILENAME = "../bets.db"
 import sqlite3
 from sqlite3 import Error
 from datetime import datetime
-
 
 
 class Race:
@@ -48,7 +48,7 @@ class Race:
             self._connection = sqlite3.connect(DB_FILENAME)
             self._cursor = self._connection.cursor()
         except Error as e:
-            print(f"Error: {DB_FILENAME} {e}")
+            logging.exception(f"Error: {DB_FILENAME} {e}")
             exit()
 
         self._track = Track()
@@ -58,6 +58,9 @@ class Race:
         # self._cursor = None
         self.track.cursor = self._cursor
         self.csv_headers = None
+
+    def __del_(self):
+        self.logger.debug(f'Race Closed {datetime.now()}')
 
     @property
     def connection(self):
@@ -91,14 +94,15 @@ class Race:
 
     @race_track_name.setter
     def race_track_name(self, race_track_name: str):
+
         self.track.track_name = race_track_name
 
     @property
-    def results_url(self):
+    def race_results_url(self):
         return self._race_results_url
 
-    @results_url.setter
-    def results_url(self, race_results_url: str):
+    @race_results_url.setter
+    def race_results_url(self, race_results_url: str):
         self._race_results_url = race_results_url
 
     @property
@@ -150,8 +154,8 @@ class Race:
     def db_insert_race(self):
         # look up track id, track must be already in the database
         insert_query = """
-                       INSERT INTO races (race_date, results_url, race_name, track_id)
-                       VALUES (?, ?, ?, ?)
+                       INSERT INTO races (race_date, results_url, race_name, track_id, race_track_name)
+                       VALUES (?, ?, ?, ?, ?)
                        """
 
         select_race_query = """select race_id, track_id
@@ -159,18 +163,19 @@ class Race:
                                where race_date = ?
                                  and track_id = ? \
                             """
-        data_tuple = (self._race_date, self._race_results_url, self._race_name, self.track.race_track_id)
+        data_tuple = (self._race_date, self._race_results_url, self._race_name, self.track.race_track_id, self.race_track_name)
         try:
             self._cursor.execute(insert_query, data_tuple)
             self._connection.commit()
         except Exception as e:
-            pass
+            # self._connection.close()
+            logging.exception(f"{e}")
         data_tuple = (self._race_date, self.track.race_track_id,)
         self._cursor.execute(select_race_query, data_tuple)
         results = self._cursor.fetchone()
         self._race_id = results[0]
         self._race_track_id = results[1]
-        pass
+        self.logger.info(f"Created Race: {data_tuple}")
 
     def db_get_race(self, race_name: str, race_date: str, cursor: sqlite3.Cursor):
         query = """select *
@@ -232,7 +237,7 @@ class Race:
 
 
 ESPN_RACING_RESULTS = "https://www.espn.com/racing/results/_/year"
-import data_operations.beerme as beerme
+# import data_operations.beerme as beerme
 
 if __name__ == "__main__":
     # logger = logging.getLogger(__name__)

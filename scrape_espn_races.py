@@ -66,7 +66,9 @@ def get_track_name(psoup, year):
         # get the race track name
         race_track = track_name[1].text
         # remove the race name, and only the track name is left
-        race_track = re.sub(f"{race_name}", "", race_track)
+        race_track1 = re.sub(f"{race_name}", "", race_track)
+        race_track = re.match(f'(\/>).(?=<)',  str(track_name[1]))
+        race_track1 = re.sub(f"{race_name}", "", race_track1)
         race_results_url = track_name[1].find_all("a")[0]["href"]
         races.append(
             {"race_date": race_date.strftime("%m/%d/%Y"), "race_track_name": race_track, "race_results_url": race_results_url,
@@ -94,7 +96,7 @@ def run():
                     assert isinstance(track, object)
                     the_track = Track()
                     the_track.track_name = track["race_track_name"]
-                    the_track.db_insert_track()
+                    the_track.db_insert_track(the_track.track_name)
                     logger.info(f"{track["race_date"]:16} {track["race_track_name"]}")
                     race = Race()
                     race.race_name = track["race_name"]
@@ -102,13 +104,13 @@ def run():
                     race.race_results_url = track["race_results_url"]
                     race.track.race_track_id = the_track.race_track_id
                     race.race_track_name = track["race_track_name"]
-                    race.db_insert_race()
+                    # race.db_insert_race()
                 # creates a YYYY_races.json file
                 logger.info(f"Saving {year}_races.json")
                 with open(f"{year}_races.json", "w") as file:
                     json.dump(track_names, file, indent=4)
         except Exception as e:
-            logging.exception(f"Failed to process year: {year}")
+            logging.exception(f"Failed to process year: {year} {e}")
             exit(e.__str__())
 
 if __name__ == "__main__":
