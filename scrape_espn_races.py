@@ -8,14 +8,17 @@ Create YYYY_bets.json file for the year provided
 
 import collections
 import datetime as datetime
-import re
-import sys
-
-from data_operations.race import Race
-from data_operations.track import Track
-import json
 import logging
 import logging.config
+import re
+import sys
+from dataclasses import dataclass, asdict
+
+import json
+from data_operations.race import Race
+from data_operations.track import TrackDB
+from data_operations.race import Race, RaceDB
+# from data_operations.track import Track
 
 # error_handler = logging.FileHandler("scrape_espn_races.log")
 # error_handler.setLevel(logging.DEBUG)
@@ -23,13 +26,14 @@ collections.Callable = collections.abc.Callable
 from settings import HEADERS
 import requests
 from bs4 import BeautifulSoup
-
+from data_operations.track import Track
 ESPN_RACING_RESULTS = "https://www.espn.com/racing/results/_/year/"
-
 
 #  python scrape_espn.py
 
 logger = logging.getLogger(__name__)
+
+
 def bs(url):
     response = requests.get(url, headers=HEADERS)
     # print(f"{response}")
@@ -45,7 +49,15 @@ def bs(url):
         return None
 
 
-def get_track_name(psoup, year):
+@dataclass
+class TrackData:
+    race_track_name: str
+    race_date: str
+    race_results_url: str
+    race_name: str
+
+
+def get_race_details(psoup, year):
     """
 
     :param psoup:
@@ -61,19 +73,18 @@ def get_track_name(psoup, year):
             skip += 1
             continue
         race_date = datetime.datetime.strptime(track_name[0].text + f" {year}", "%a, %b %d %Y").date()
-
-        race_name = track_name[1].find_all("a")[0].text
         # get the race track name
-        race_track = track_name[1].text
-        # remove the race name, and only the track name is left
-        race_track1 = re.sub(f"{race_name}", "", race_track)
-        race_track = re.match(f'(\/>).(?=<)',  str(track_name[1]))
-        race_track1 = re.sub(f"{race_name}", "", race_track1)
-        race_results_url = track_name[1].find_all("a")[0]["href"]
-        races.append(
-            {"race_date": race_date.strftime("%m/%d/%Y"), "race_track_name": race_track, "race_results_url": race_results_url,
-             "race_name": race_name, })
+        pattern = r"(?<=br\/>).*(?=<)"
+        match = re.search(pattern, str(track_name[1]))
+        # end of get race track name
+        trackData = TrackData(race_name=track_name[1].find_all("a")[0].text,
+                              race_track_name=match.group(),
+                              race_date=race_date.strftime("%m/%d/%Y"),
+                              race_results_url=track_name[1].find_all("a")[0]["href"], )
+        logger.info(f"{asdict(trackData)}")
+        races.append(asdict(trackData))
     return races
+
 
 def run():
     logging.config.fileConfig("logging.conf")
@@ -88,30 +99,25 @@ def run():
         logger.info(f"Processing year: {year}")
         # url is an espn nascar list of all races completed for that year
         url = f"{ESPN_RACING_RESULTS}{year}"
-        try:
-            if soup := bs(url):
-                track_names = get_track_name(soup, year=year)
+        if soup := bs(url):
+            race_details = get_race_details(soup, year=year)
 
-                for track in track_names:
-                    assert isinstance(track, object)
-                    the_track = Track()
-                    the_track.track_name = track["race_track_name"]
-                    the_track.db_insert_track(the_track.track_name)
-                    logger.info(f"{track["race_date"]:16} {track["race_track_name"]}")
-                    race = Race()
-                    race.race_name = track["race_name"]
-                    race.race_date = track["race_date"]
-                    race.race_results_url = track["race_results_url"]
-                    race.track.race_track_id = the_track.race_track_id
-                    race.race_track_name = track["race_track_name"]
-                    # race.db_insert_race()
-                # creates a YYYY_races.json file
-                logger.info(f"Saving {year}_races.json")
-                with open(f"{year}_races.json", "w") as file:
-                    json.dump(track_names, file, indent=4)
-        except Exception as e:
-            logging.exception(f"Failed to process year: {year} {e}")
-            exit(e.__str__())
+        for race in race_details:
+            assert isinstance(race, object)
+            # the_track.track_name = race["race_track_name"]
+            the_track = Track(track_name=race["race_track_name"],)
+            track_db = TrackDB()
+            track_id = track_db.insert_track(the_track)
+            # track_id = track_db.get_track_id(the_track)
+            logger.info(f"{race["race_date"]:16} {race["race_track_name"]}")
+            race = Race(race_name=race["race_name"], race_track_id=track_id, race_date=race["race_date"],race_track_name=race["race_track_name"], race_results_url=race["race_results_url"] )
+            race_db = RaceDB()
+            race_db.insert_race(race)
+            # creates a YYYY_races.json file
+        logger.info(f"Saving {year}_races.json")
+        with open(f"{year}_races.json", "w") as file:
+            json.dump(race_details, file, indent=4)
+
 
 if __name__ == "__main__":
     run()

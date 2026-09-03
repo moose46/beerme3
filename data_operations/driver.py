@@ -1,14 +1,20 @@
+import collections
+
+# Needed for BeautifulSoup
+collections.Callable = collections.abc.Callable
 import requests
 from bs4 import BeautifulSoup
 import logging
 import logging.config
+
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
                   "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 "
                   "Safari/537.36 Edg/147.0.0.0"
 }
 
-logger = logging.getLogger(__name__)
+
+
 def bs(url):
     response = requests.get(url, headers=HEADERS)
     # print(f"{response}")
@@ -22,3 +28,13 @@ def bs(url):
     else:
         logging.exception(f"Failed to retrieve data from {url}")
         return None
+
+
+if __name__ == "__main__":
+    logging.config.fileConfig("logging.conf")
+    logger = logging.getLogger(__name__)
+    logger.info(f"Entered driver.py {logger.name}")
+    soup = bs("https://www.espn.com/racing/raceresults/_/series/sprint/raceId/202608290009")
+    if soup:
+        logger.debug(f"{soup}")
+

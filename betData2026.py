@@ -293,6 +293,12 @@ class BetData2026:
             "Track": "New Hampshire Raceway",
             "badge_color": "bg-warning text-dark",
         }
+        self.individual_bets["08-29-2026"] = {
+            "Greg": "William Byron",
+            "Bob": "Kyle Larson",
+            "Track": "Daytona",
+            "badge_color": "bg-warning text-dark",
+        }
 
         # # start of can't pick a driver twice
 
