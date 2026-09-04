@@ -18,21 +18,33 @@ class TrackDB:
         self._db_path = db_path
 
     def insert_track(self, track: Track) -> Optional[int]:
+        """
+        Insert track into the tracks table
+        :param track:
+        :return: track_id
+        """
         try:
             with sqlite3.connect(self._db_path) as conn:
                 cursor = conn.cursor()
                 cursor.execute(f"INSERT INTO tracks (track_name) VALUES (?)", (track.track_name,))
                 conn.commit()
                 return self.get_track_id(track)
+        #     Duplicate Entry Found, Just return track id
         except sqlite3.IntegrityError as e:
             return self.get_track_id(track)
 
     def get_track_id(self, track: Track) -> Optional[int]:
+        """
+        Fetch track ID from the tracks table
+        :param track:
+        :return: track_id
+        """
         try:
             with sqlite3.connect(self._db_path) as conn:
                 cursor = conn.cursor()
                 cursor.execute(f"SELECT track_id FROM tracks where track_name = ?", (track.track_name,))
                 ret = cursor.fetchone()
                 return ret[0]
+        #     Unknown Reason
         except Exception as e:
             logger.info(f"Error Getting Track ID: {track.track_name} {e}")

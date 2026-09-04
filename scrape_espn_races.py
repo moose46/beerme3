@@ -13,11 +13,12 @@ import logging.config
 import re
 import sys
 from dataclasses import dataclass, asdict
+from typing import Any
 
 import json
-from data_operations.race import Race
-from data_operations.track import TrackDB
 from data_operations.race import Race, RaceDB
+from data_operations.track import TrackDB
+
 # from data_operations.track import Track
 
 # error_handler = logging.FileHandler("scrape_espn_races.log")
@@ -27,6 +28,7 @@ from settings import HEADERS
 import requests
 from bs4 import BeautifulSoup
 from data_operations.track import Track
+
 ESPN_RACING_RESULTS = "https://www.espn.com/racing/results/_/year/"
 
 #  python scrape_espn.py
@@ -105,18 +107,46 @@ def run():
         for race in race_details:
             assert isinstance(race, object)
             # the_track.track_name = race["race_track_name"]
-            the_track = Track(track_name=race["race_track_name"],)
+            the_track = Track(track_name=race["race_track_name"], )
             track_db = TrackDB()
             track_id = track_db.insert_track(the_track)
             # track_id = track_db.get_track_id(the_track)
             logger.info(f"{race["race_date"]:16} {race["race_track_name"]}")
-            race = Race(race_name=race["race_name"], race_track_id=track_id, race_date=race["race_date"],race_track_name=race["race_track_name"], race_results_url=race["race_results_url"] )
+            race = Race(race_name=race["race_name"], race_track_id=track_id, race_date=race["race_date"],
+                        race_track_name=race["race_track_name"], race_results_url=race["race_results_url"])
             race_db = RaceDB()
             race_db.insert_race(race)
             # creates a YYYY_races.json file
+
+        for race in race_details:
+            if soup := bs(race["race_results_url"]):
+                race_results = get_race_results(soup)
+
         logger.info(f"Saving {year}_races.json")
         with open(f"{year}_races.json", "w") as file:
             json.dump(race_details, file, indent=4)
+
+
+def get_race_results(soup: BeautifulSoup) -> Any:
+    rows = soup.find_all("tr")
+    skip = 1
+    for row in rows:
+        table_data = row.find_all("td")
+        if skip <= 2:
+            skip += 1
+            continue
+        position = table_data[0].text
+        driver = table_data[1].text
+        car = table_data[2].text
+        manufacturer = table_data[3].text
+        laps = table_data[4].text
+        start = table_data[5].text
+        led = table_data[6].text
+        pts = table_data[7].text
+        bonus = table_data[8].text
+        penality = table_data[9].text
+        driver_url = "http://www.espn.com/racing/" +  table_data[1].find("a")["href"]
+        pass
 
 
 if __name__ == "__main__":
