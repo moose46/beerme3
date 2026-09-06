@@ -1,6 +1,6 @@
 import logging.config
 import sqlite3
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict, astuple
 from typing import Optional
 
 logging.config.fileConfig("logging.conf")
@@ -21,6 +21,8 @@ class DriverDB:
     def __init__(self, db_path="bets.db"):
         self.db_path = db_path
         def insert_driver(self, driver: Driver):
+            driver_dict = asdict(driver)
+            driver_tuple = astuple(driver)
             try:
                 conn = sqlite3.connect(self.db_path)
                 cursor = conn.cursor()

@@ -40,9 +40,9 @@ class RaceDB:
         try:
             with sqlite3.connect(self._db_path) as connection:
                 cursor = connection.cursor()
-                cursor.execute(f"SELECT track_id FROM tracks where track_name = ?", (race.race_track_name,))
+                cursor.execute(f"SELECT race_id FROM races where race_date = ?", (race.race_date,))
                 ret = cursor.fetchone()
                 race.race_id = ret[0]
                 return ret[0]
         except Exception as e:
-            logger.info(f"Error Getting Track ID: {race.track_name} {e}")
+            logger.info(f"Error Getting Race ID: {race.track_name} {e}")

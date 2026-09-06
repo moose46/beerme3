@@ -1,3 +1,4 @@
+import dataclasses
 import logging.config
 import sqlite3
 from dataclasses import dataclass
@@ -23,6 +24,10 @@ class TrackDB:
         :param track:
         :return: track_id
         """
+
+        # track_dict = dataclasses.asdict(track)
+        # track_tuple = tuple(track_dict.values())
+        # track_fields = tuple(track_dict.keys())
         try:
             with sqlite3.connect(self._db_path) as conn:
                 cursor = conn.cursor()

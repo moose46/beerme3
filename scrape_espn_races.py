@@ -17,6 +17,7 @@ from typing import Any
 
 import json
 from data_operations.race import Race, RaceDB
+from data_operations.results import RaceResultsDB, RaceResults
 from data_operations.track import TrackDB
 
 # from data_operations.track import Track
@@ -112,40 +113,46 @@ def run():
             track_id = track_db.insert_track(the_track)
             # track_id = track_db.get_track_id(the_track)
             logger.info(f"{race["race_date"]:16} {race["race_track_name"]}")
-            race = Race(race_name=race["race_name"], race_track_id=track_id, race_date=race["race_date"],
-                        race_track_name=race["race_track_name"], race_results_url=race["race_results_url"])
+            race_dict = Race(race_name=race["race_name"], race_track_id=track_id, race_date=race["race_date"],
+                             race_track_name=race["race_track_name"], race_results_url=race["race_results_url"])
             race_db = RaceDB()
-            race_db.insert_race(race)
+            race_id = race_db.insert_race(race_dict)
             # creates a YYYY_races.json file
-
-        for race in race_details:
             if soup := bs(race["race_results_url"]):
-                race_results = get_race_results(soup)
+                race_results = get_race_results(soup, track_id=track_id, race_id=race_id)
 
         logger.info(f"Saving {year}_races.json")
         with open(f"{year}_races.json", "w") as file:
             json.dump(race_details, file, indent=4)
 
 
-def get_race_results(soup: BeautifulSoup) -> Any:
+def get_race_results(soup: BeautifulSoup, track_id, race_id) -> Any:
     rows = soup.find_all("tr")
     skip = 1
+
     for row in rows:
         table_data = row.find_all("td")
         if skip <= 2:
             skip += 1
             continue
-        position = table_data[0].text
-        driver = table_data[1].text
-        car = table_data[2].text
-        manufacturer = table_data[3].text
-        laps = table_data[4].text
-        start = table_data[5].text
-        led = table_data[6].text
-        pts = table_data[7].text
-        bonus = table_data[8].text
-        penality = table_data[9].text
-        driver_url = "http://www.espn.com/racing/" +  table_data[1].find("a")["href"]
+        results = RaceResults(pos=table_data[0].text,
+                              driver_name=table_data[1].text,
+                              car=table_data[2].text,
+                              manufacturer=table_data[3].text,
+                              laps=table_data[4].text,
+                              start=table_data[5].text,
+                              led=table_data[6].text,
+                              pts=table_data[7].text,
+                              bonus=table_data[8].text,
+                              espn_driver_url="https://www.espn.com" + table_data[1].find("a")["href"],
+                              # results_id=-1,
+                              race_id=race_id,
+                              track_id=track_id,
+                              driver_id=-1,
+                              penalty=table_data[9].text
+                              )
+        race_db = RaceResultsDB()
+        race_db.insert_results(results)
         pass
 
 
