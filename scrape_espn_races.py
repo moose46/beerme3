@@ -101,7 +101,7 @@ def run():
     for year in range(year, year + 1):
         logger.info(f"Processing year: {year}")
         # url is an espn nascar list of all races completed for that year
-        url = f"{ESPN_RACING_RESULTS}{year}"
+        url = f"https://www.espn.com/racing/results/_/year/{year}"
         if soup := bs(url):
             race_details = get_race_details(soup, year=year)
 
