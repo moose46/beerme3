@@ -341,6 +341,12 @@ class BetData2026:
             "Track": "Phoenix",
             "badge_color": "bg-warning text-dark",
         }
+        self.individual_bets["10-25-2026"] = {
+            "Greg": "Ryan Blaney",
+            "Bob": "Chase Briscoe",
+            "Track": "Talladega",
+            "badge_color": "bg-warning text-dark",
+        }
 
         # # start of can't pick a driver twice
 
