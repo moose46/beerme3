@@ -277,6 +277,12 @@ class BetData2026:
             "Track"      : "Martinsville",
             "badge_color": "bg-warning text-dark",
         }
+        self.individual_bets["11-08-2026"] = {
+            "Greg"       : "Denny Hamlin",
+            "Bob"        : "Chase Briscoe",
+            "Track"      : "Miami",
+            "badge_color": "bg-warning text-dark",
+        }
 
         # # start of can't pick a driver twice
 
@@ -368,6 +374,9 @@ class BetData2026:
         cursor.execute("select id from race_schedule where track=? and race_date=?", (track, race_date))
         return cursor.fetchone()[0]
 
+    def create_score_board(self):
+        pass
+
 
 import os
 
@@ -404,18 +413,15 @@ if __name__ == "__main__":
                        player_beers_total int         not null default 0
                    )"""
     cursor.execute(csv_table)
-    # scoring_results = """create table if not exists scoring_results
-    #                      (
-    #                          track              varchar(50) not null,
-    #                          race_date          varchar(12) not null,
-    #                          bob_driver_name    varchar(50) not null,
-    #                          greg_driver_name   varchar(50) not null,
-    #                          bob_driver_finish  int         not null default 0,
-    #                          greg_driver_finish int         not null default 0,
-    #                          bob_points         int         not null default 0,
-    #                          greg_points        int         not null default 0
-    #                      )"""
-    # cursor.execute(scoring_results)
+    scoring_results = """create table if not exists scoring_results
+                         (
+                             race_name        varchar(50) not null,
+                             greg_driver_name varchar(50) not null,
+                             greg_beer        int         not null default 0,
+                             bob_driver_name  varchar(50) not null,
+                             bob_beer         int         not null default 0
+                         )"""
+    cursor.execute(scoring_results)
     # weekly_bets = """create table if not exists weekly_bets
     #                  (
     #                      track       varchar(50) not null,
@@ -438,6 +444,7 @@ if __name__ == "__main__":
     # results = bets.get_bets
     bets.create_db_from_csv_files(db)
     bets.load_bet_data(bets.individual_bets)
+    bets.create_score_board()
     # cursor.execute("select * from race_results")
     # for row in cursor.fetchall():
     #     print(row)
