@@ -347,20 +347,26 @@ class BetData2026:
                 f"select finish from race_results where track='{track}' and race_date='{race_date}' and driver='"
                 f"{gregs_pick}'")
             greg_finish = to_int(cursor.fetchone()[0])
+            bob_awarded = 0
+            greg_awarded = 0
             if greg_finish < bob_finish:
                 greg_total += 1
+                greg_awarded = 1
                 if greg_finish == 1:
                     greg_total += 1
+                    greg_awarded = 2
             elif bob_finish < greg_finish:
                 bob_total += 1
+                bob_awarded = 1
                 if bob_finish == 1:
                     bob_total += 1
+                    bob_awarded = 2
             cursor.execute(
-                "update race_results set player_beers_total=? where track=? and race_date=? and player_name=?",
-                (bob_total, track, race_date, 'Bob'))
+                "update race_results set player_beers_total=?, points_awarded=? where track=? and race_date=? and player_name=?",
+                (bob_total,bob_awarded, track, race_date, 'Bob'))
             cursor.execute(
-                "update race_results set player_beers_total=? where track=? and race_date=? and player_name=?",
-                (greg_total, track, race_date, 'Greg'))
+                "update race_results set player_beers_total=?, points_awarded=? where track=? and race_date=? and player_name=?",
+                (greg_total,greg_awarded, track, race_date, 'Greg'))
             db.commit()
             print(f"bob={bob_total}, greg={greg_total}, track={track}")
         # cursor.execute("select * from scoring_results")
@@ -387,7 +393,10 @@ if __name__ == "__main__":
 
     bets = BetData2026()
     # db = sqlite3.connect(":memory:")
-    os.remove("beerme.db")
+    try:
+        os.remove("beerme.db")
+    except FileNotFoundError:
+        pass
     db = sqlite3.connect("beerme.db")
     cursor = db.cursor()
     race_schedule = """
@@ -410,7 +419,8 @@ if __name__ == "__main__":
                        car_number         int         not null default 0,
                        finish             int         not null,
                        player_name        varchar(50),
-                       player_beers_total int         not null default 0
+                       player_beers_total int         not null default 0,
+                       points_awarded int         not null default 0
                    )"""
     cursor.execute(csv_table)
     scoring_results = """create table if not exists scoring_results
